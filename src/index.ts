@@ -13,17 +13,6 @@ const startServer = () =>
   setupExpressApp({
     express: {
       port: parseInt(process.env.PORT || "4000"),
-      preInit: (app) => {
-        if (process.env.NODE_ENV === "development") {
-          // on development expose swagger UI for quick testing available on
-          // `http://localhost:4000/api-docs-users` (for example)
-          mountSwaggerUi({
-            filePath: "./api/openapi-users.json",
-            mountPoint: "/api-docs-users",
-            app,
-          });
-        }
-      },
       postInit: (app) => {
         app.use("/admin", adminAuth, adminRouter);
         app.use("/client", clientAuth, clientRouter);

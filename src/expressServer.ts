@@ -36,8 +36,6 @@ async function setupExpressApp(options: StartServerOpts) {
 async function createExpressApp(cfg: StartServerOpts) {
   const app = express();
 
-  cfg.express?.preInit?.(app);
-
   app.use(express.json());
   app.use(express.text());
   app.use(express.urlencoded({ extended: false }));

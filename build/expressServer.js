@@ -19,7 +19,7 @@ async function createExpressApp(cfg) {
     app.use(express.json());
     app.use(express.text());
     app.use(express.urlencoded({ extended: false }));
-    cfg.express?.routes?.(app);
+    cfg.express?.postInit?.(app);
     return app;
 }
 async function startExpressServer(cfg) {
