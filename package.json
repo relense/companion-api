@@ -1,0 +1,32 @@
+{
+  "name": "deskbird-challenge",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "npx tsc && node --watch build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "prisma": "^5.16.1",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.16.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "tsx": "^4.16.2",
+    "uuid": "^10.0.0"
+  }
+}

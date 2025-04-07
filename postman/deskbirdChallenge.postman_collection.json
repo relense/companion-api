@@ -1,0 +1,438 @@
+{
+	"info": {
+		"_postman_id": "dd3a02be-3aa2-41fc-b992-5ee24854b932",
+		"name": "Deskbird Challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22872170"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "ADMIN create booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "e484a86f-781b-4483-a514-6b4804f72155",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientId\": \"cly9ulbhv00019jt5cnxja1uw\",\n    \"parkingSpotId\": \"cly9ulbi2000a9jt5as4cpq33\",\n    \"startDateTime\": \"2024-07-06T09:13:44.186Z\",\n    \"endDateTime\": \"2024-07-06T10:13:44.186Z\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/admin/bookings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADMIN get all user bookings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "e484a86f-781b-4483-a514-6b4804f72155",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/admin/bookings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADMIN get booking",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "e484a86f-781b-4483-a514-6b4804f72155",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/admin/bookings/cly9yccj70000atq0ba29eux2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"bookings",
+								"cly9yccj70000atq0ba29eux2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADMIN update booking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "e484a86f-781b-4483-a514-6b4804f72155",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"parkingSpotId\": \"cly9ulbi200049jt5mqesvyz3\",\n    \"startDateTime\": \"2024-07-06T10:00:44.186Z\",\n    \"endDateTime\": \"2024-07-06T10:12:44.186Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/admin/bookings/cly9yccj70000atq0ba29eux2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"bookings",
+								"cly9yccj70000atq0ba29eux2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADMIN delete booking",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "e484a86f-781b-4483-a514-6b4804f72155",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/admin/bookings/cly9yccj70000atq0ba29eux2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"bookings",
+								"cly9yccj70000atq0ba29eux2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Client",
+			"item": [
+				{
+					"name": "CLIENT create booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "b67655fb-4add-42bf-a36a-81f5d5e4d19b",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"parkingSpotId\": \"cly9ulbi200049jt5mqesvyz3\",\n    \"startDateTime\": \"2024-07-06T09:56:55.186Z\",\n    \"endDateTime\": \"2024-07-06T10:17:44.186Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/client/bookings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"client",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CLIENT get all bookings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "b67655fb-4add-42bf-a36a-81f5d5e4d19b",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/client/bookings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"client",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CLIENT get booking",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "b67655fb-4add-42bf-a36a-81f5d5e4d19b",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/client/bookings/cly9yh5dr0001atq0bkdimjqc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"client",
+								"bookings",
+								"cly9yh5dr0001atq0bkdimjqc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CLIENT update booking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "9a413c9e-b849-4f08-ba1b-1763f529eced",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"parkingSpotId\": \"cly9ulbi200039jt5b3muy9l3\",\n    \"startDateTime\": \"2024-07-06T11:45:44.186Z\",\n    \"endDateTime\": \"2024-07-06T11:59:44.186Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/client/bookings/cly9yh5dr0001atq0bkdimjqc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"client",
+								"bookings",
+								"cly9yh5dr0001atq0bkdimjqc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CLIENT delete booking",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json;   charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "apiKey",
+								"value": "9a413c9e-b849-4f08-ba1b-1763f529eced",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/client/bookings/cly9xahl800007m65032vwdak",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"client",
+								"bookings",
+								"cly9xahl800007m65032vwdak"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
