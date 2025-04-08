@@ -1,16 +1,21 @@
 import { middleware } from "express-openapi-validator";
 import path from "path";
+import { Router } from "express";
+import { fileURLToPath } from "url";
 
 import { securityService } from "../services/security.service.js";
 import { typedRouter } from "../utils/expressUtils.js";
 import { messageService } from "../services/message.service.js";
-import { Router } from "express";
 
 const router = typedRouter(Router());
 
+// Get the directory. Note that '__dirname' is not available in ESM scope
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 router.baseRouter().use(
   middleware({
-    apiSpec: path.join(__dirname, "../api/openapi-admin.json"),
+    apiSpec: path.join(__dirname, "../api/openapi-client.json"),
     validateRequests: true,
     validateResponses: false,
   })
@@ -21,7 +26,7 @@ router.post("/messages", async (req, res, next) => {
     try {
       const response = await messageService.createMessage({
         context: securityService.assertClientContext(req.context),
-        message: req.body.message,
+        message: "",
       });
 
       res.status(200).json(response);

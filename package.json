@@ -1,10 +1,12 @@
 {
-  "name": "deskbird-challenge",
+  "name": "companion-api",
   "version": "1.0.0",
   "description": "",
   "type": "module",
+  "exports": "./build/index.js",
   "scripts": {
-    "dev": "npx tsc && node --watch build/index.js",
+    "copy:api": "mkdir -p build/api && cp src/api/*.json build/api/",
+    "dev": "npx tsc && npm run copy:api && node --watch build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "gen:types:client": "openapi-typescript ./src/api/openapi-client.json -o ./src/api/openapi-client.d.ts",
     "gen:types": "npm run gen:types:client"
@@ -15,7 +17,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.18.4",
     "@types/express": "^4.17.21",
     "@types/swagger-ui-express": "^4.1.8",
     "openapi-typescript": "^7.6.1",

@@ -14,8 +14,8 @@ const startServer = () =>
       preInit: (app) => {
         if (process.env.NODE_ENV === "development") {
           mountSwaggerUi({
-            filePath: "./api/openapi-clients.json",
-            mountPoint: "/api-docs-clients",
+            filePath: "./api/openapi-client.json",
+            mountPoint: "/api-docs-client",
             app,
           });
         }
