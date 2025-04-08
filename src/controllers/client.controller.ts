@@ -21,22 +21,25 @@ router.baseRouter().use(
   })
 );
 
-router.post("/messages", async (req, res, next) => {
-  try {
+router.post<CompanionApi.CreateMessage.Config>(
+  "/messages",
+  async (req, res, next) => {
     try {
-      const response = await messageService.createMessage({
-        context: securityService.assertClientContext(req.context),
-        message: "",
-      });
+      try {
+        const response = await messageService.createMessage({
+          context: securityService.assertClientContext(req.context),
+          message: req.body.message,
+        });
 
-      res.status(200).json(response);
+        res.status(200).json(undefined);
+      } catch (err) {
+        next(err);
+      }
     } catch (err) {
       next(err);
     }
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 router.get("/messages", async (req, res, next) => {
   try {

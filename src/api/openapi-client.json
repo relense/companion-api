@@ -4,15 +4,10 @@
     "title": "Companion API",
     "version": "0.0.1"
   },
-  "tags": [
-    {
-      "name": "client",
-      "description": "Operations related to client management"
-    }
-  ],
+  "tags": [],
   "servers": [
     {
-      "url": "http://localhost:4000/messages"
+      "url": "http://localhost:4000/client"
     }
   ],
   "paths": {
@@ -61,49 +56,346 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
           }
         },
         "x-order": 0
-      }
-    }
-  },
-  "components": {
-    "responses": {
-      "BadRequest": {
-        "description": "Invalid request data",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              },
-              "required": ["message"]
-            }
-          }
-        }
       },
-      "InternalServerError": {
-        "description": "Internal server error",
-        "content": {
-          "application/json": {
+      "get": {
+        "summary": "Get a list of all messages",
+        "operationId": "getMessages",
+        "parameters": [
+          {
+            "description": "Maximum number of results returned (25 by default)",
+            "name": "PageSize",
+            "in": "query",
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
+              "type": "number",
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 25
+            }
+          },
+          {
+            "description": "Page of results to be fetched from the server (1 by default)",
+            "name": "Page",
+            "in": "query",
+            "schema": { "type": "number", "minimum": 1, "default": 1 }
+          }
+        ],
+        "tags": ["messages"],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched a list of all Messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "SubscriptionId": { "type": "string" }
+                        },
+                        "required": ["SubscriptionId"]
+                      }
+                    },
+                    "Meta": {
+                      "type": "object",
+                      "description": "Information about the results",
+                      "properties": {
+                        "PageSize": {
+                          "type": "number",
+                          "description": "Maximum number of results return in a single request"
+                        },
+                        "PreviousPage": {
+                          "type": "number",
+                          "description": "Number of the previous page. If empty, means the current page is the first one"
+                        },
+                        "NextPage": {
+                          "type": "number",
+                          "description": "Number of the next page. If empty, means the current page is the last one"
+                        },
+                        "PageCount": {
+                          "type": "number",
+                          "description": "Total number of pages found"
+                        },
+                        "ItemCount": {
+                          "type": "number",
+                          "description": "Total number of items found"
+                        }
+                      },
+                      "required": ["PageSize", "PageCount", "ItemCount"]
+                    },
+                    "Links": {
+                      "type": "object",
+                      "properties": {
+                        "Self": { "type": "string" },
+                        "Next": { "type": "string" },
+                        "Prev": { "type": "string" }
+                      },
+                      "required": ["Self"]
+                    }
+                  },
+                  "required": ["Items", "Meta", "Links"]
                 }
-              },
-              "required": ["message"]
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
             }
           }
-        }
+        },
+        "x-order": 1
+      }
+    },
+    "/accounts": {
+      "post": {
+        "summary": "Create a Account",
+        "operationId": "createAccount",
+        "tags": ["accounts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accountName": {
+                    "type": "string",
+                    "description": "the name of the account"
+                  }
+                },
+                "required": ["account"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a acount",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accountId": {
+                      "type": "string",
+                      "description": "The ID of the created account"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Content of the account"
+                    }
+                  },
+                  "required": ["accountId", "description"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "x-order": 0
+      },
+      "get": {
+        "summary": "Get a list of all accounts",
+        "operationId": "getAccounts",
+        "parameters": [
+          {
+            "description": "Maximum number of results returned (25 by default)",
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 25
+            }
+          },
+          {
+            "description": "Page of results to be fetched from the server (1 by default)",
+            "name": "Page",
+            "in": "query",
+            "schema": { "type": "number", "minimum": 1, "default": 1 }
+          }
+        ],
+        "tags": ["accounts"],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched a list of all accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "SubscriptionId": { "type": "string" }
+                        },
+                        "required": ["SubscriptionId"]
+                      }
+                    },
+                    "Meta": {
+                      "type": "object",
+                      "description": "Information about the results",
+                      "properties": {
+                        "PageSize": {
+                          "type": "number",
+                          "description": "Maximum number of results return in a single request"
+                        },
+                        "PreviousPage": {
+                          "type": "number",
+                          "description": "Number of the previous page. If empty, means the current page is the first one"
+                        },
+                        "NextPage": {
+                          "type": "number",
+                          "description": "Number of the next page. If empty, means the current page is the last one"
+                        },
+                        "PageCount": {
+                          "type": "number",
+                          "description": "Total number of pages found"
+                        },
+                        "ItemCount": {
+                          "type": "number",
+                          "description": "Total number of items found"
+                        }
+                      },
+                      "required": ["PageSize", "PageCount", "ItemCount"]
+                    }
+                  },
+                  "required": ["Items", "Meta"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "x-order": 1
       }
     }
   }
