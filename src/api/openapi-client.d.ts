@@ -1,6 +1,7 @@
 declare namespace CompanionApi {
   namespace CreateMessage {
     export type QueryParameters = {};
+    export type PathParameters = {};
     export interface RequestBody {
       message: string;
     }
@@ -21,12 +22,12 @@ declare namespace CompanionApi {
       method: "post";
       expressPath: "/messages";
       openapiPath: "/messages";
-      pathParams?: any;
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
       responses: Responses.$201 | Responses.$400 | Responses.$500;
       successResponses: Responses.$201;
-      requestBody: RequestBody;
-      queryParams: QueryParameters;
-      headers?: any;
     }
   }
   namespace GetMessages {
@@ -34,6 +35,7 @@ declare namespace CompanionApi {
       PageSize?: number;
       Page?: number;
     }
+    export type PathParameters = {};
     export type RequestBody = {};
     namespace Responses {
       export interface $200 {
@@ -53,18 +55,19 @@ declare namespace CompanionApi {
       method: "get";
       expressPath: "/messages";
       openapiPath: "/messages";
-      pathParams?: any;
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
       responses: Responses.$200 | Responses.$400 | Responses.$500;
       successResponses: Responses.$200;
-      requestBody: RequestBody;
-      queryParams: QueryParameters;
-      headers?: any;
     }
   }
   namespace CreateAccount {
     export type QueryParameters = {};
+    export type PathParameters = {};
     export interface RequestBody {
-      accountName?: string;
+      accountName: string;
     }
     namespace Responses {
       export interface $201 {
@@ -83,12 +86,12 @@ declare namespace CompanionApi {
       method: "post";
       expressPath: "/accounts";
       openapiPath: "/accounts";
-      pathParams?: any;
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
       responses: Responses.$201 | Responses.$400 | Responses.$500;
       successResponses: Responses.$201;
-      requestBody: RequestBody;
-      queryParams: QueryParameters;
-      headers?: any;
     }
   }
   namespace GetAccounts {
@@ -96,6 +99,7 @@ declare namespace CompanionApi {
       PageSize?: number;
       Page?: number;
     }
+    export type PathParameters = {};
     export type RequestBody = {};
     namespace Responses {
       export interface $200 {
@@ -114,12 +118,12 @@ declare namespace CompanionApi {
       method: "get";
       expressPath: "/accounts";
       openapiPath: "/accounts";
-      pathParams?: any;
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
       responses: Responses.$200 | Responses.$400 | Responses.$500;
       successResponses: Responses.$200;
-      requestBody: RequestBody;
-      queryParams: QueryParameters;
-      headers?: any;
     }
   }
 }

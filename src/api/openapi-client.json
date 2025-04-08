@@ -226,7 +226,7 @@
                     "description": "the name of the account"
                   }
                 },
-                "required": ["account"]
+                "required": ["accountName"]
               }
             }
           }

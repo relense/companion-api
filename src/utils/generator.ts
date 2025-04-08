@@ -26,20 +26,34 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
     const ns = toNamespace(operationId);
     lines.push(`  namespace ${ns} {`);
 
-    // --- Query Parameters ---
+    // --- Parameters (Query + Path) ---
     const queryParams = (details.parameters || []).filter(
       (p: any) => p.in === "query"
+    );
+    const pathParams = (details.parameters || []).filter(
+      (p: any) => p.in === "path"
     );
 
     if (queryParams.length > 0) {
       lines.push("    export interface QueryParameters {");
       for (const param of queryParams) {
         const type = param.schema?.type || "string";
-        lines.push(`      ${param.name}?: ${type};`);
+        lines.push(`      ${param.name}${param.required ? "" : "?"}: ${type};`);
       }
       lines.push("    }");
     } else {
       lines.push("    export type QueryParameters = {};");
+    }
+
+    if (pathParams.length > 0) {
+      lines.push("    export interface PathParameters {");
+      for (const param of pathParams) {
+        const type = param.schema?.type || "string";
+        lines.push(`      ${param.name}${param.required ? "" : "?"}: ${type};`);
+      }
+      lines.push("    }");
+    } else {
+      lines.push("    export type PathParameters = {};");
     }
 
     // --- Request Body ---
@@ -80,18 +94,20 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
       .join(" | ");
 
     lines.push("    export interface Config {");
-    lines.push(`      operationId: "${operationId}";`);
-    lines.push(`      method: "${method}";`);
+    lines.push(`      operationId: \"${operationId}\";`);
+    lines.push(`      method: \"${method}\";`);
     lines.push(
-      `      expressPath: "${routePath.replace(/{/g, ":").replace(/}/g, "")}";`
+      `      expressPath: \"${routePath
+        .replace(/{/g, ":")
+        .replace(/}/g, "")}\";`
     );
-    lines.push(`      openapiPath: "${routePath}";`);
-    lines.push("      pathParams?: any;");
+    lines.push(`      openapiPath: \"${routePath}\";`);
+    lines.push("      pathParams: PathParameters;");
+    lines.push("      queryParams: QueryParameters;");
+    lines.push("      requestBody: RequestBody;");
+    lines.push("      headers?: any;");
     lines.push(`      responses: ${responseUnion};`);
     lines.push(`      successResponses: Responses.$${firstResponse};`);
-    lines.push("      requestBody: RequestBody;");
-    lines.push("      queryParams: QueryParameters;");
-    lines.push("      headers?: any;");
     lines.push("    }");
 
     lines.push("  }");
@@ -101,5 +117,4 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
 lines.push("}");
 
 fs.writeFileSync(outputPath, lines.join("\n"), "utf-8");
-
-console.log("✅ Type declarations written to generated-companion-api.d.ts");
+console.log("✅ Type declarations written to openapi-client.d.ts");

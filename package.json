@@ -8,7 +8,6 @@
     "copy:api": "mkdir -p build/api && cp src/api/*.json build/api/",
     "dev": "npx tsc && npm run copy:api && node --watch build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "gen:types:client": "openapi-typescript ./src/api/openapi-client.json -o ./src/api/openapi-client.d.ts",
     "gen:types": "tsx src/utils/generator.ts"
   },
   "prisma": {
