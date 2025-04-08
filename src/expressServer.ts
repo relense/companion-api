@@ -4,7 +4,11 @@ import http from "http";
 const expressAppConfig = {} as StartServerOpts;
 
 type ErrorBody = unknown;
-
+type ErrorData = {
+  statusCode: number;
+  errorMessage: string;
+  errorBody: ErrorBody;
+};
 type ExpressCustomizationPoint = (app: express.Application) => void;
 
 interface StartServerOpts {
@@ -14,6 +18,12 @@ interface StartServerOpts {
     preInit?: ExpressCustomizationPoint;
     /**Run after standard middleware is installed in Express. Use to install regular middleware, like route handlers */
     postInit?: ExpressCustomizationPoint;
+    /**
+     * Function called by the default error handler for re-formatting the error that's get sent bak to the user.
+     * Must return a new object containing the new status code and the new error body.
+     * This function is ignored if `customErrorHandler` is defined.
+     */
+    errorFormatter?: (err: Error, req: Request) => ErrorData;
   };
 }
 
@@ -35,6 +45,8 @@ async function setupExpressApp(options: StartServerOpts) {
 
 async function createExpressApp(cfg: StartServerOpts) {
   const app = express();
+
+  cfg.express?.preInit?.(app);
 
   app.use(express.json());
   app.use(express.text());

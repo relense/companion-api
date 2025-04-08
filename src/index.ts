@@ -4,10 +4,8 @@ import { Application } from "express";
 import swaggerUi from "swagger-ui-express";
 
 import { setupExpressApp } from "./expressServer.js";
-import { adminAuth } from "./auth/admin.auth.js";
 import { clientAuth } from "./auth/client.auth.js";
-import { adminRouter } from "./controllers/admin.controller.js";
-import { clientRouter } from "./controllers/client.controller.js";
+import * as ClientRouter from "./controllers/client.controller.js";
 
 const startServer = () =>
   setupExpressApp({
@@ -16,15 +14,14 @@ const startServer = () =>
       preInit: (app) => {
         if (process.env.NODE_ENV === "development") {
           mountSwaggerUi({
-            filePath: "./api/openapi-users.json",
-            mountPoint: "/api-docs-users",
+            filePath: "./api/openapi-clients.json",
+            mountPoint: "/api-docs-clients",
             app,
           });
         }
       },
       postInit: (app) => {
-        app.use("/admin", adminAuth, adminRouter);
-        app.use("/client", clientAuth, clientRouter);
+        app.use("/client", clientAuth, ClientRouter.router.baseRouter());
       },
     },
   });

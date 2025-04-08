@@ -1,17 +1,27 @@
-import express from "express";
-import { bookingService } from "../services/booking.service.js";
+import { middleware } from "express-openapi-validator";
+import path from "path";
+
 import { securityService } from "../services/security.service.js";
+import { typedRouter } from "../utils/expressUtils.js";
+import { messageService } from "../services/message.service.js";
+import { Router } from "express";
 
-const router = express.Router();
+const router = typedRouter(Router());
 
-router.post("/bookings", async (req, res, next) => {
+router.baseRouter().use(
+  middleware({
+    apiSpec: path.join(__dirname, "../api/openapi-admin.json"),
+    validateRequests: true,
+    validateResponses: false,
+  })
+);
+
+router.post("/messages", async (req, res, next) => {
   try {
     try {
-      const response = await bookingService.createClientBooking({
+      const response = await messageService.createMessage({
         context: securityService.assertClientContext(req.context),
-        parkingSpotId: req.body.parkingSpotId,
-        startDateTime: req.body.startDateTime,
-        endDateTime: req.body.endDateTime,
+        message: req.body.message,
       });
 
       res.status(200).json(response);
@@ -23,57 +33,40 @@ router.post("/bookings", async (req, res, next) => {
   }
 });
 
-router.get("/bookings", async (req, res, next) => {
+router.get("/messages", async (req, res, next) => {
   try {
-    const response = await bookingService.getAllClientBookings({
-      context: securityService.assertClientContext(req.context),
-    });
-
+    const response = {};
     res.status(200).json(response);
   } catch (err) {
     next(err);
   }
 });
 
-router.get("/bookings/:bookingId", async (req, res, next) => {
+router.get("/messages/:messageId", async (req, res, next) => {
   try {
-    const response = await bookingService.getClientBooking({
-      context: securityService.assertClientContext(req.context),
-      bookingId: req.params.bookingId,
-    });
-
+    const response = {};
     res.status(200).json(response);
   } catch (err) {
     next(err);
   }
 });
 
-router.put("/bookings/:bookingId", async (req, res, next) => {
+router.put("/messages/:messageId", async (req, res, next) => {
   try {
-    const response = await bookingService.updateClientBooking({
-      context: securityService.assertClientContext(req.context),
-      bookingId: req.params.bookingId,
-      parkingSpotId: req.body.parkingSpotId,
-      startDateTime: req.body.startDateTime,
-      endDateTime: req.body.endDateTime,
-    });
+    const response = {};
     res.status(200).json(response);
   } catch (err) {
     next(err);
   }
 });
 
-router.delete("/bookings/:bookingId", async (req, res, next) => {
+router.delete("/messages/:messageId", async (req, res, next) => {
   try {
-    const response = await bookingService.deleteClientBooking({
-      context: securityService.assertClientContext(req.context),
-      bookingId: req.params.bookingId,
-    });
-
+    const response = {};
     res.status(200).json(response);
   } catch (err) {
     next(err);
   }
 });
 
-export { router as clientRouter };
+export { router };

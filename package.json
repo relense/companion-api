@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "npx tsc && node --watch build/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gen:types:client": "openapi-typescript ./src/api/openapi-client.json -o ./src/api/openapi-client.d.ts",
+    "gen:types": "npm run gen:types:client"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -13,9 +15,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.18.4",
     "@types/express": "^4.17.21",
-    "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "openapi-typescript": "^7.6.1",
     "prisma": "^5.16.1",
     "typescript": "^5.5.3"
   },
@@ -23,6 +26,7 @@
     "@prisma/client": "^5.16.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-openapi-validator": "^5.4.9",
     "pg": "^8.12.0",
     "swagger-ui-express": "^5.0.1",
     "tsx": "^4.16.2",
