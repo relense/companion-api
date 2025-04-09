@@ -17,7 +17,7 @@ router.baseRouter().use(
   middleware({
     apiSpec: path.join(__dirname, "../api/openapi-client.json"),
     validateRequests: true,
-    validateResponses: false,
+    validateResponses: true,
   })
 );
 
@@ -31,7 +31,7 @@ router.post<CompanionApi.CreateMessage.Config>(
           message: req.body.message,
         });
 
-        res.status(200).json(undefined);
+        res.status(201).json(response);
       } catch (err) {
         next(err);
       }
@@ -41,14 +41,17 @@ router.post<CompanionApi.CreateMessage.Config>(
   }
 );
 
-router.get("/messages", async (req, res, next) => {
-  try {
-    const response = {};
-    res.status(200).json(response);
-  } catch (err) {
-    next(err);
+router.get<CompanionApi.GetMessages.Config>(
+  "/messages",
+  async (req, res, next) => {
+    try {
+      const response = {};
+      res.status(200).json(undefined);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 router.get("/messages/:messageId", async (req, res, next) => {
   try {
