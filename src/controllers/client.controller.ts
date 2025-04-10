@@ -6,12 +6,10 @@ import { fileURLToPath } from "url";
 import { securityService } from "../services/security.service.js";
 import { typedRouter } from "../utils/expressUtils.js";
 import { messageService } from "../services/message.service.js";
-import { Message } from "../models/Message.js";
 import { buildPaginatedResponse } from "../utils/paginationUtils.js";
 
 const router = typedRouter(Router());
 
-// Get the directory. Note that '__dirname' is not available in ESM scope
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -57,14 +55,9 @@ router.get<CompanionApi.GetMessages.Config>(
 
       res.status(200).json(
         buildPaginatedResponse({
-          items: response.items
-            .map(Message.fromRow)
-            .map((msg) => msg.toResource()),
+          items: response.items,
           total: response.itemCount,
-          pagination: {
-            page: req.query.page || 1,
-            size: req.query.pageSize || 25,
-          },
+          pagination: response.pagination,
         })
       );
     } catch (err) {
@@ -89,21 +82,37 @@ router.get<CompanionApi.GetMessage.Config>(
   }
 );
 
-router.put("/messages/:messageId", async (req, res, next) => {
-  try {
-    res.status(200).json(undefined);
-  } catch (err) {
-    next(err);
-  }
-});
+router.put<CompanionApi.UpdateMessage.Config>(
+  "/messages/:messageId",
+  async (req, res, next) => {
+    try {
+      const response = await messageService.updateMessage({
+        context: securityService.assertClientContext(req.context),
+        messageId: req.params.messageId,
+        message: req.body.messageContent,
+      });
 
-router.delete("/messages/:messageId", async (req, res, next) => {
-  try {
-    const response = {};
-    res.status(200).json(response);
-  } catch (err) {
-    next(err);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
+
+router.delete<CompanionApi.DeleteMessage.Config>(
+  "/messages/:messageId",
+  async (req, res, next) => {
+    try {
+      const response = await messageService.deleteMessage({
+        context: securityService.assertClientContext(req.context),
+        messageId: req.params.messageId,
+      });
+
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 export { router };

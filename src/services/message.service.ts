@@ -48,20 +48,46 @@ async function getAllMessages(params: {
   if (!data) throw new Error("Fetch failed");
 
   return {
-    items: data,
+    items: data.map(Message.fromRow).map((msg) => msg.toResource()),
     itemCount: data.length,
+    pagination: params.pagination,
   };
 }
 
 async function updateMessage(params: {
   context: SecurityContext<"CLIENT">;
   messageId: string;
-}) {}
+  message: string;
+}) {
+  let { data, error } = await supabase
+    .from("Message")
+    .update({ description: params.message })
+    .eq("messageId", params.messageId)
+    .select();
+
+  if (error || !data || data.length === 0) {
+    throw new Error("Failed to update message");
+  }
+
+  return Message.fromRow(data[0]);
+}
 
 async function deleteMessage(params: {
   context: SecurityContext<"CLIENT">;
   messageId: string;
-}) {}
+}) {
+  const { data, error } = await supabase
+    .from("Message")
+    .delete()
+    .eq("messageId", params.messageId)
+    .select();
+
+  if (error || !data || data.length === 0) {
+    throw new Error(`Failed to update message: ${error}`);
+  }
+
+  return Message.fromRow(data[0]);
+}
 
 const messageService = {
   createMessage,

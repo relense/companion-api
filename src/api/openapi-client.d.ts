@@ -95,4 +95,71 @@ declare namespace CompanionApi {
       successResponses: Responses.$200;
     }
   }
+  namespace UpdateMessage {
+    export type QueryParameters = {};
+    export interface PathParameters {
+      messageId: string;
+    }
+    export interface RequestBody {
+      messageContent: string;
+    }
+    namespace Responses {
+      export interface $200 {
+        messageId: string;
+        description: string;
+        updatedAt: string;
+      }
+      export interface $400 {
+        message?: string;
+      }
+      export interface $500 {
+        message?: string;
+      }
+    }
+    export interface Config {
+      operationId: "updateMessage";
+      method: "put";
+      expressPath: "/messages/:messageId";
+      openapiPath: "/messages/{messageId}";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace DeleteMessage {
+    export type QueryParameters = {};
+    export interface PathParameters {
+      messageId: string;
+    }
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $200 {
+        messageId: string;
+        description: string;
+        createdAt: string;
+        updatedAt: string;
+      }
+      export interface $400 {
+        message?: string;
+      }
+      export interface $500 {
+        message?: string;
+      }
+    }
+    export interface Config {
+      operationId: "deleteMessage";
+      method: "delete";
+      expressPath: "/messages/:messageId";
+      openapiPath: "/messages/{messageId}";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
 }
