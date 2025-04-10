@@ -32,16 +32,16 @@ declare namespace CompanionApi {
   }
   namespace GetMessages {
     export interface QueryParameters {
-      PageSize?: number;
-      Page?: number;
+      pageSize?: number;
+      page?: number;
     }
     export type PathParameters = {};
     export type RequestBody = {};
     namespace Responses {
       export interface $200 {
-        Items: array;
-        Meta: object;
-        Links: object;
+        items: array;
+        meta: object;
+        links: object;
       }
       export interface $400 {
         message: string;
@@ -63,61 +63,30 @@ declare namespace CompanionApi {
       successResponses: Responses.$200;
     }
   }
-  namespace CreateAccount {
+  namespace GetMessage {
     export type QueryParameters = {};
-    export type PathParameters = {};
-    export interface RequestBody {
-      accountName: string;
+    export interface PathParameters {
+      messageId: string;
     }
-    namespace Responses {
-      export interface $201 {
-        accountId: string;
-        description: string;
-      }
-      export interface $400 {
-        message: string;
-      }
-      export interface $500 {
-        message: string;
-      }
-    }
-    export interface Config {
-      operationId: "createAccount";
-      method: "post";
-      expressPath: "/accounts";
-      openapiPath: "/accounts";
-      pathParams: PathParameters;
-      queryParams: QueryParameters;
-      requestBody: RequestBody;
-      headers?: any;
-      responses: Responses.$201 | Responses.$400 | Responses.$500;
-      successResponses: Responses.$201;
-    }
-  }
-  namespace GetAccounts {
-    export interface QueryParameters {
-      PageSize?: number;
-      Page?: number;
-    }
-    export type PathParameters = {};
     export type RequestBody = {};
     namespace Responses {
       export interface $200 {
-        Items: array;
-        Meta: object;
+        messageId: string;
+        description: string;
+        createdAt: string;
       }
       export interface $400 {
-        message: string;
+        message?: string;
       }
       export interface $500 {
-        message: string;
+        message?: string;
       }
     }
     export interface Config {
-      operationId: "getAccounts";
+      operationId: "getMessage";
       method: "get";
-      expressPath: "/accounts";
-      openapiPath: "/accounts";
+      expressPath: "/messages/:messageId";
+      openapiPath: "/messages/{messageId}";
       pathParams: PathParameters;
       queryParams: QueryParameters;
       requestBody: RequestBody;
