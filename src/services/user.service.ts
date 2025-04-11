@@ -5,6 +5,7 @@ async function validateUser(params: { userToken: string }) {
     id: "djiosadioasjdoiasjo",
     role: "CLIENT",
   };
+
   // const user = await prisma.user.findFirst({
   //   where: {
   //     token: params.userToken,
