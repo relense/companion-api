@@ -1,18 +1,13 @@
+import { supabase } from "../lib/supabaseClient.js";
 import { Errors } from "../utils/errors.js";
 
 async function validateUser(params: { userToken: string }) {
-  const user = {
-    id: "djiosadioasjdoiasjo",
-    role: "CLIENT",
-  };
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(params.userToken);
 
-  // const user = await prisma.user.findFirst({
-  //   where: {
-  //     token: params.userToken,
-  //   },
-  // });
-
-  if (!user) {
+  if (error || !user) {
     throw Errors.userNotFound(params.userToken);
   }
 

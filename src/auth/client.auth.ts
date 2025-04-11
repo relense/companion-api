@@ -14,7 +14,7 @@ async function buildContext({
     userToken: token,
   });
 
-  if (user.role !== "CLIENT") {
+  if (user.user_metadata.userRole !== "CLIENT") {
     throw Errors.forbidden();
   }
 
