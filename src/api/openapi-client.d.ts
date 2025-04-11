@@ -162,4 +162,37 @@ declare namespace CompanionApi {
       successResponses: Responses.$200;
     }
   }
+  namespace GetMessagesByUser {
+    export interface QueryParameters {
+      pageSize?: number;
+      page?: number;
+    }
+    export type PathParameters = {};
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $200 {
+        items: array;
+        meta: object;
+        links: object;
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "getMessagesByUser";
+      method: "get";
+      expressPath: "/users/messages";
+      openapiPath: "/users/messages";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
 }

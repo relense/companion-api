@@ -9,7 +9,7 @@ async function createMessage(params: {
 }) {
   let data = await supabase
     .from("Message")
-    .insert([{ description: params.message }])
+    .insert([{ description: params.message, userId: params.context.userId }])
     .select()
     .single();
 
@@ -33,9 +33,31 @@ async function getMessage(params: {
   return Message.fromRow(data.data);
 }
 
-async function getAllMessages(params: {
-  pagination: Pagination;
+async function getAllMessagesByUser(params: {
   context: SecurityContext<"CLIENT">;
+  pagination: Pagination;
+}) {
+  const from = (params.pagination.page - 1) * params.pagination.size;
+  const to = from + params.pagination.size - 1;
+
+  let { data, error } = await supabase
+    .from("Message")
+    .select("*")
+    .eq("userId", params.context.userId)
+    .range(from, to);
+
+  if (!data) throw new Error("Fetch failed");
+
+  return {
+    items: data.map(Message.fromRow).map((msg) => msg.toResource()),
+    itemCount: data.length,
+    pagination: params.pagination,
+  };
+}
+
+async function getAllMessages(params: {
+  context: SecurityContext<"CLIENT">;
+  pagination: Pagination;
 }) {
   const from = (params.pagination.page - 1) * params.pagination.size;
   const to = from + params.pagination.size - 1;
@@ -92,6 +114,7 @@ async function deleteMessage(params: {
 const messageService = {
   createMessage,
   getMessage,
+  getAllMessagesByUser,
   getAllMessages,
   updateMessage,
   deleteMessage,

@@ -21,6 +21,11 @@ router.baseRouter().use(
   })
 );
 
+//MESSAGES ROUTES
+
+//**
+// Post route: Create a message
+//  */
 router.post<CompanionApi.CreateMessage.Config>(
   "/messages",
   async (req, res, next) => {
@@ -41,6 +46,9 @@ router.post<CompanionApi.CreateMessage.Config>(
   }
 );
 
+//**
+// Get route: Fetch all messages
+//  */
 router.get<CompanionApi.GetMessages.Config>(
   "/messages",
   async (req, res, next) => {
@@ -66,6 +74,9 @@ router.get<CompanionApi.GetMessages.Config>(
   }
 );
 
+//**
+// Get route: Fetch one message by message id
+//  */
 router.get<CompanionApi.GetMessage.Config>(
   "/messages/:messageId",
   async (req, res, next) => {
@@ -82,6 +93,9 @@ router.get<CompanionApi.GetMessage.Config>(
   }
 );
 
+//**
+// Put route: Update one message by message id
+//  */
 router.put<CompanionApi.UpdateMessage.Config>(
   "/messages/:messageId",
   async (req, res, next) => {
@@ -99,6 +113,9 @@ router.put<CompanionApi.UpdateMessage.Config>(
   }
 );
 
+//**
+// Delete route: Delete one message by message id
+//  */
 router.delete<CompanionApi.DeleteMessage.Config>(
   "/messages/:messageId",
   async (req, res, next) => {
@@ -109,6 +126,35 @@ router.delete<CompanionApi.DeleteMessage.Config>(
       });
 
       res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// USERS ROUTES
+//**
+// Get route: Fetchs all the messages he user has sent
+//  */
+router.get<CompanionApi.GetMessagesByUser.Config>(
+  "/users/messages",
+  async (req, res, next) => {
+    try {
+      const response = await messageService.getAllMessagesByUser({
+        pagination: {
+          page: req.query.page || 1,
+          size: req.query.pageSize || 25,
+        },
+        context: securityService.assertClientContext(req.context),
+      });
+
+      res.status(200).json(
+        buildPaginatedResponse({
+          items: response.items,
+          total: response.itemCount,
+          pagination: response.pagination,
+        })
+      );
     } catch (err) {
       next(err);
     }
