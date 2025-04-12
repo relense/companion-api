@@ -3,12 +3,13 @@ declare namespace CompanionApi {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      message: string;
+      companionId: string;
+      content: string;
     }
     namespace Responses {
       export interface $201 {
         messageId: string;
-        description: string;
+        content: string;
       }
       export interface $400 {
         message: string;
@@ -72,8 +73,9 @@ declare namespace CompanionApi {
     namespace Responses {
       export interface $200 {
         messageId: string;
-        description: string;
+        content: string;
         createdAt: string;
+        updatedAt: string;
       }
       export interface $400 {
         message?: string;
@@ -101,12 +103,12 @@ declare namespace CompanionApi {
       messageId: string;
     }
     export interface RequestBody {
-      messageContent: string;
+      content: string;
     }
     namespace Responses {
       export interface $200 {
         messageId: string;
-        description: string;
+        content: string;
         updatedAt: string;
       }
       export interface $400 {
@@ -138,7 +140,7 @@ declare namespace CompanionApi {
     namespace Responses {
       export interface $200 {
         messageId: string;
-        description: string;
+        content: string;
         createdAt: string;
         updatedAt: string;
       }
@@ -162,7 +164,38 @@ declare namespace CompanionApi {
       successResponses: Responses.$200;
     }
   }
-  namespace GetMessagesByUser {
+  namespace CreateCompanion {
+    export type QueryParameters = {};
+    export type PathParameters = {};
+    export interface RequestBody {
+      name?: string;
+    }
+    namespace Responses {
+      export interface $201 {
+        companionId: string;
+        name: string;
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "createCompanion";
+      method: "post";
+      expressPath: "/companions";
+      openapiPath: "/companions";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$201 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$201;
+    }
+  }
+  namespace GetCompanions {
     export interface QueryParameters {
       pageSize?: number;
       page?: number;
@@ -183,10 +216,76 @@ declare namespace CompanionApi {
       }
     }
     export interface Config {
-      operationId: "getMessagesByUser";
+      operationId: "getCompanions";
       method: "get";
-      expressPath: "/users/messages";
-      openapiPath: "/users/messages";
+      expressPath: "/companions";
+      openapiPath: "/companions";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace GetCompanion {
+    export type QueryParameters = {};
+    export interface PathParameters {
+      companionId: string;
+    }
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $200 {
+        companionId: string;
+        name: string;
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "getCompanion";
+      method: "get";
+      expressPath: "/companions/:companionId";
+      openapiPath: "/companions/{companionId}";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace GetMessagesByCompanion {
+    export interface QueryParameters {
+      pageSize?: number;
+      page?: number;
+    }
+    export interface PathParameters {
+      companionId: string;
+    }
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $200 {
+        items: array;
+        meta: object;
+        links: object;
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "getMessagesByCompanion";
+      method: "get";
+      expressPath: "/companions/:companionId/messages";
+      openapiPath: "/companions/{companionId}/messages";
       pathParams: PathParameters;
       queryParams: QueryParameters;
       requestBody: RequestBody;

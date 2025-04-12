@@ -5,7 +5,6 @@
     "title": "Companion API",
     "version": "0.0.1"
   },
-  "tags": [],
   "paths": {
     "/messages": {
       "post": {
@@ -19,12 +18,16 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": {
+                  "companionId": {
+                    "type": "string",
+                    "description": "The id of the companion"
+                  },
+                  "content": {
                     "type": "string",
                     "description": "The message content"
                   }
                 },
-                "required": ["message"]
+                "required": ["companionId", "content"]
               }
             }
           }
@@ -41,12 +44,12 @@
                       "type": "string",
                       "description": "The ID of the created message"
                     },
-                    "description": {
+                    "content": {
                       "type": "string",
                       "description": "Content of the message"
                     }
                   },
-                  "required": ["messageId", "description"]
+                  "required": ["messageId", "content"]
                 }
               }
             }
@@ -123,10 +126,18 @@
                         "type": "object",
                         "properties": {
                           "messageId": { "type": "string" },
-                          "description": { "type": "string" },
-                          "createdAt": { "type": "string" }
+                          "content": { "type": "string" },
+                          "createdAt": { "type": "string" },
+                          "updatedAt": {
+                            "type": "string"
+                          }
                         },
-                        "required": ["messageId", "description", "createdAt"]
+                        "required": [
+                          "messageId",
+                          "content",
+                          "createdAt",
+                          "updatedAt"
+                        ]
                       }
                     },
                     "meta": {
@@ -228,21 +239,22 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "messageId": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 40
-                    },
-                    "description": {
+                    "messageId": { "type": "string" },
+                    "content": {
                       "type": "string"
                     },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time",
                       "example": "2021-01-01T08:00:00Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2021-01-01T08:00:00Z"
                     }
                   },
-                  "required": ["messageId", "description", "createdAt"]
+                  "required": ["messageId", "content", "createdAt", "updatedAt"]
                 }
               }
             }
@@ -279,7 +291,7 @@
             "name": "messageId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "minLength": 1, "maxLength": 40 }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -287,8 +299,8 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": { "messageContent": { "type": "string" } },
-                "required": ["messageContent"]
+                "properties": { "content": { "type": "string" } },
+                "required": ["content"]
               }
             }
           }
@@ -302,12 +314,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "messageId": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 250
-                    },
-                    "description": {
+                    "messageId": { "type": "string" },
+                    "content": {
                       "type": "string"
                     },
                     "updatedAt": {
@@ -316,7 +324,7 @@
                       "example": "2021-01-01T08:00:00Z"
                     }
                   },
-                  "required": ["messageId", "description", "updatedAt"]
+                  "required": ["messageId", "content", "updatedAt"]
                 }
               }
             }
@@ -353,7 +361,7 @@
             "name": "messageId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "minLength": 1, "maxLength": 40 }
+            "schema": { "type": "string" }
           }
         ],
         "tags": ["messages"],
@@ -365,12 +373,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "messageId": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 250
-                    },
-                    "description": {
+                    "messageId": { "type": "string" },
+                    "content": {
                       "type": "string"
                     },
                     "createdAt": {
@@ -384,12 +388,7 @@
                       "example": "2021-01-01T08:00:00Z"
                     }
                   },
-                  "required": [
-                    "messageId",
-                    "description",
-                    "createdAt",
-                    "updatedAt"
-                  ]
+                  "required": ["messageId", "content", "createdAt", "updatedAt"]
                 }
               }
             }
@@ -419,10 +418,87 @@
         }
       }
     },
-    "/users/messages": {
+    "/companions": {
+      "post": {
+        "summary": "Create a Companion",
+        "operationId": "createCompanion",
+        "tags": ["companions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "the name of the companion"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a Companion",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "companionId": {
+                      "type": "string",
+                      "description": "The ID of the created Companion"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the companion"
+                    }
+                  },
+                  "required": ["companionId", "name"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "x-order": 0
+      },
       "get": {
-        "summary": "Get a list of all messages",
-        "operationId": "getMessagesByUser",
+        "summary": "Get a list of all companions",
+        "operationId": "getCompanions",
         "parameters": [
           {
             "description": "Maximum number of results returned (25 by default)",
@@ -442,10 +518,216 @@
             "schema": { "type": "number", "minimum": 1, "default": 1 }
           }
         ],
-        "tags": ["users"],
+        "tags": ["companions"],
         "responses": {
           "200": {
-            "description": "Successfully fetched a list of all Messages",
+            "description": "Successfully fetched a list of all Companions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "companionId": { "type": "string" },
+                          "name": { "type": "string" },
+                          "createdAt": { "type": "string" },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "companionId",
+                          "name",
+                          "createdAt",
+                          "updatedAt"
+                        ]
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "description": "Information about the results",
+                      "properties": {
+                        "pageSize": {
+                          "type": "number",
+                          "description": "Maximum number of results return in a single request"
+                        },
+                        "previousPage": {
+                          "type": "number",
+                          "description": "Number of the previous page. If empty, means the current page is the first one"
+                        },
+                        "nextPage": {
+                          "type": "number",
+                          "description": "Number of the next page. If empty, means the current page is the last one"
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "description": "Total number of pages found"
+                        },
+                        "itemCount": {
+                          "type": "number",
+                          "description": "Total number of items found"
+                        }
+                      },
+                      "required": ["pageSize", "pageCount", "itemCount"]
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "self": { "type": "string" },
+                        "next": { "type": "string" },
+                        "prev": { "type": "string" }
+                      },
+                      "required": ["self"]
+                    }
+                  },
+                  "required": ["items", "meta", "links"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companions/{companionId}": {
+      "get": {
+        "summary": "Get a companion",
+        "operationId": "getCompanion",
+        "parameters": [
+          {
+            "name": "companionId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "tags": ["companions"],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched a companion",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "companionId": {
+                      "type": "string",
+
+                      "description": "the id of the companion"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "the name of the companion"
+                    }
+                  },
+                  "required": ["companionId", "name"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companions/{companionId}/messages": {
+      "get": {
+        "summary": "Get a list of all messages related with a companion",
+        "operationId": "getMessagesByCompanion",
+        "parameters": [
+          {
+            "name": "companionId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Maximum number of results returned (25 by default)",
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 25
+            }
+          },
+          {
+            "description": "Page of results to be fetched from the server (1 by default)",
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "number", "minimum": 1, "default": 1 }
+          }
+        ],
+        "tags": ["companions"],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched a list of all Messages associated with a Companion",
             "content": {
               "application/json": {
                 "schema": {
@@ -457,10 +739,22 @@
                         "type": "object",
                         "properties": {
                           "messageId": { "type": "string" },
-                          "description": { "type": "string" },
-                          "createdAt": { "type": "string" }
+                          "content": { "type": "string" },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
                         },
-                        "required": ["messageId", "description", "createdAt"]
+                        "required": [
+                          "messageId",
+                          "content",
+                          "createdAt",
+                          "updatedAt"
+                        ]
                       }
                     },
                     "meta": {
@@ -551,5 +845,15 @@
       "ApiKey": { "type": "apiKey", "name": "apiKey", "in": "header" }
     },
     "schemas": {}
-  }
+  },
+  "tags": [
+    {
+      "name": "messages",
+      "description": "Operations related to messages"
+    },
+    {
+      "name": "companions",
+      "description": "Companion creation and queries"
+    }
+  ]
 }

@@ -61,24 +61,19 @@ async function startExpressServer(cfg: StartServerOpts) {
   const app = await createExpressApp(cfg);
   const server = http.createServer(app);
 
-  // Start Server
   await new Promise((resolve) => {
     server.listen(expressAppConfig.express.port, function () {
-      // resolve the promise, so the caller can wait on the server being ready
       resolve(server);
     });
   });
 }
 
 class AppError extends Error {
-  // HTTP status code of the error
   statusCode: number;
 
-  // Body of the error HTTP response
   data: ErrorBody;
   level: "warn" | "error" = "error";
 
-  // Additional info associated with the error, that will be logged, but WILL NOT be sent back to the caller (unlike `data`)
   hiddenInfo: ({ body?: string } & Record<string, unknown>) | undefined;
 
   constructor(

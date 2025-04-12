@@ -1,58 +1,43 @@
 import { supabase } from "../lib/supabaseClient.js";
 import { Message } from "../models/Message.js";
+import { Errors } from "../utils/errors.js";
 import { Pagination } from "../utils/paginationUtils.js";
 import { SecurityContext } from "./security.service.js";
 
 async function createMessage(params: {
   context: SecurityContext<"CLIENT">;
   message: string;
+  companionId: string;
 }) {
-  let data = await supabase
+  let { data, error } = await supabase
     .from("Message")
-    .insert([{ description: params.message, userId: params.context.userId }])
+    .insert([
+      {
+        content: params.message,
+        companionId: params.companionId,
+      },
+    ])
     .select()
     .single();
 
-  if (!data) throw new Error("Creation failed");
+  if (!data || error) throw Errors.messageNotCreated(params.message);
 
-  return Message.fromRow(data.data);
+  return Message.fromRow(data);
 }
 
 async function getMessage(params: {
   context: SecurityContext<"CLIENT">;
   messageId: string;
 }) {
-  let data = await supabase
+  let { data, error } = await supabase
     .from("Message")
     .select("*")
     .eq("messageId", params.messageId)
     .single();
 
-  if (!data) throw new Error("Fetch failed");
+  if (!data || error) throw Errors.messageNotFound(params.messageId);
 
   return Message.fromRow(data.data);
-}
-
-async function getAllMessagesByUser(params: {
-  context: SecurityContext<"CLIENT">;
-  pagination: Pagination;
-}) {
-  const from = (params.pagination.page - 1) * params.pagination.size;
-  const to = from + params.pagination.size - 1;
-
-  let { data, error } = await supabase
-    .from("Message")
-    .select("*")
-    .eq("userId", params.context.userId)
-    .range(from, to);
-
-  if (!data) throw new Error("Fetch failed");
-
-  return {
-    items: data.map(Message.fromRow).map((msg) => msg.toResource()),
-    itemCount: data.length,
-    pagination: params.pagination,
-  };
 }
 
 async function getAllMessages(params: {
@@ -67,7 +52,7 @@ async function getAllMessages(params: {
     .select("*")
     .range(from, to);
 
-  if (!data) throw new Error("Fetch failed");
+  if (!data || error) throw Errors.messagesNotFound();
 
   return {
     items: data.map(Message.fromRow).map((msg) => msg.toResource()),
@@ -83,7 +68,7 @@ async function updateMessage(params: {
 }) {
   let { data, error } = await supabase
     .from("Message")
-    .update({ description: params.message })
+    .update({ content: params.message })
     .eq("messageId", params.messageId)
     .select();
 
@@ -111,13 +96,36 @@ async function deleteMessage(params: {
   return Message.fromRow(data[0]);
 }
 
+async function getAllMessagesByCompanion(params: {
+  context: SecurityContext<"CLIENT">;
+  pagination: Pagination;
+  companionId: string;
+}) {
+  const from = (params.pagination.page - 1) * params.pagination.size;
+  const to = from + params.pagination.size - 1;
+
+  let { data, error } = await supabase
+    .from("Message")
+    .select("*")
+    .eq("companionId", params.companionId)
+    .range(from, to);
+
+  if (!data || error) throw new Error("Fetch failed");
+
+  return {
+    items: data.map(Message.fromRow).map((msg) => msg.toResource()),
+    itemCount: data.length,
+    pagination: params.pagination,
+  };
+}
+
 const messageService = {
   createMessage,
   getMessage,
-  getAllMessagesByUser,
   getAllMessages,
   updateMessage,
   deleteMessage,
+  getAllMessagesByCompanion,
 };
 
 export { messageService };

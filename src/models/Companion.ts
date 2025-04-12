@@ -1,35 +1,31 @@
-type MessageRow = {
-  messageId: string;
-  content: string;
+type CompanionRow = {
   companionId: string;
+  name: string;
   createdAt: string;
   updatedAt: string;
 };
 
-export class Message {
+export class Companion {
   constructor(
-    public readonly messageId: string,
-    public readonly content: string,
     public readonly companionId: string,
+    public readonly name: string,
     public readonly createdAt: string,
     public readonly updatedAt: string
   ) {}
 
   toResource() {
     return {
-      messageId: this.messageId,
-      content: this.content,
       companionId: this.companionId,
+      name: this.name,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
   }
 
-  static fromRow(row: MessageRow): Message {
-    return new Message(
-      row.messageId,
-      row.content,
+  static fromRow(row: CompanionRow): Companion {
+    return new Companion(
       row.companionId,
+      row.name,
       row.createdAt,
       row.updatedAt
     );

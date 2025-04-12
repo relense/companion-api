@@ -7,6 +7,7 @@ import { securityService } from "../services/security.service.js";
 import { typedRouter } from "../utils/expressUtils.js";
 import { messageService } from "../services/message.service.js";
 import { buildPaginatedResponse } from "../utils/paginationUtils.js";
+import { companionService } from "../services/companion.service.js";
 
 const router = typedRouter(Router());
 
@@ -30,16 +31,13 @@ router.post<CompanionApi.CreateMessage.Config>(
   "/messages",
   async (req, res, next) => {
     try {
-      try {
-        const response = await messageService.createMessage({
-          context: securityService.assertClientContext(req.context),
-          message: req.body.message,
-        });
+      const response = await messageService.createMessage({
+        context: securityService.assertClientContext(req.context),
+        message: req.body.content,
+        companionId: req.body.companionId,
+      });
 
-        res.status(201).json(response);
-      } catch (err) {
-        next(err);
-      }
+      res.status(201).json(response);
     } catch (err) {
       next(err);
     }
@@ -103,7 +101,7 @@ router.put<CompanionApi.UpdateMessage.Config>(
       const response = await messageService.updateMessage({
         context: securityService.assertClientContext(req.context),
         messageId: req.params.messageId,
-        message: req.body.messageContent,
+        message: req.body.content,
       });
 
       res.status(200).json(response);
@@ -132,20 +130,82 @@ router.delete<CompanionApi.DeleteMessage.Config>(
   }
 );
 
-// USERS ROUTES
+// COMPANION ROUTES
+
 //**
-// Get route: Fetchs all the messages he user has sent
+// Post route: Create a message
 //  */
-router.get<CompanionApi.GetMessagesByUser.Config>(
-  "/users/messages",
+router.post<CompanionApi.CreateCompanion.Config>(
+  "/companions",
   async (req, res, next) => {
     try {
-      const response = await messageService.getAllMessagesByUser({
+      const response = await companionService.createCompanion({
+        context: securityService.assertClientContext(req.context),
+        name: req.body.name,
+      });
+
+      res.status(201).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get<CompanionApi.GetCompanions.Config>(
+  "/companions",
+  async (req, res, next) => {
+    try {
+      const response = await companionService.getAllCompanions({
+        context: securityService.assertClientContext(req.context),
+        pagination: {
+          page: req.query.page || 1,
+          size: req.query.pageSize || 25,
+        },
+      });
+
+      res.status(200).json(
+        buildPaginatedResponse({
+          items: response.items,
+          total: response.itemCount,
+          pagination: response.pagination,
+        })
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get<CompanionApi.GetCompanion.Config>(
+  "/companions/:companionId",
+  async (req, res, next) => {
+    try {
+      const response = await companionService.getCompanion({
+        context: securityService.assertClientContext(req.context),
+        companionId: req.params.companionId,
+      });
+
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+//**
+// Get route: Fetchs all the messages a companion has
+//  */
+router.get<CompanionApi.GetMessagesByCompanion.Config>(
+  "/companions/:companionId/messages",
+  async (req, res, next) => {
+    try {
+      const response = await messageService.getAllMessagesByCompanion({
         pagination: {
           page: req.query.page || 1,
           size: req.query.pageSize || 25,
         },
         context: securityService.assertClientContext(req.context),
+        companionId: req.params.companionId,
       });
 
       res.status(200).json(
