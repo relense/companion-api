@@ -21,7 +21,7 @@ const startServer = () =>
         }
       },
       postInit: (app) => {
-        app.use("/client", clientAuth, ClientRouter.router.baseRouter());
+        app.use("/api", clientAuth, ClientRouter.router.baseRouter());
       },
     },
   });
