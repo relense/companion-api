@@ -45,15 +45,15 @@ async function getCompanion(params: {
   context: SecurityContext<"CLIENT">;
   companionId: string;
 }) {
-  let data = await supabase
+  let { data, error } = await supabase
     .from("Companion")
     .select("*")
     .eq("companionId", params.companionId)
     .single();
 
-  if (!data) throw Errors.companionNotFound(params.companionId);
+  if (!data || error) throw Errors.companionNotFound(params.companionId);
 
-  return Companion.fromRow(data.data);
+  return Companion.fromRow(data);
 }
 
 async function getAllCompanions(params: {

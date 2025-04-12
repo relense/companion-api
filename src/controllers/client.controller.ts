@@ -45,34 +45,6 @@ router.post<CompanionApi.CreateMessage.Config>(
 );
 
 //**
-// Get route: Fetch all messages
-//  */
-router.get<CompanionApi.GetMessages.Config>(
-  "/messages",
-  async (req, res, next) => {
-    try {
-      const response = await messageService.getAllMessages({
-        pagination: {
-          page: req.query.page || 1,
-          size: req.query.pageSize || 25,
-        },
-        context: securityService.assertClientContext(req.context),
-      });
-
-      res.status(200).json(
-        buildPaginatedResponse({
-          items: response.items,
-          total: response.itemCount,
-          pagination: response.pagination,
-        })
-      );
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-//**
 // Get route: Fetch one message by message id
 //  */
 router.get<CompanionApi.GetMessage.Config>(

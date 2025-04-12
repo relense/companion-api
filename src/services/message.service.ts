@@ -2,6 +2,7 @@ import { supabase } from "../lib/supabaseClient.js";
 import { Message } from "../models/Message.js";
 import { Errors } from "../utils/errors.js";
 import { Pagination } from "../utils/paginationUtils.js";
+import { companionService } from "./companion.service.js";
 import { SecurityContext } from "./security.service.js";
 
 async function createMessage(params: {
@@ -41,7 +42,7 @@ async function getMessage(params: {
 }
 
 async function getAllMessages(params: {
-  context: SecurityContext<"CLIENT">;
+  context: SecurityContext<"ADMIN">;
   pagination: Pagination;
 }) {
   const from = (params.pagination.page - 1) * params.pagination.size;
@@ -101,6 +102,11 @@ async function getAllMessagesByCompanion(params: {
   pagination: Pagination;
   companionId: string;
 }) {
+  await companionService.getCompanion({
+    context: params.context,
+    companionId: params.companionId,
+  });
+
   const from = (params.pagination.page - 1) * params.pagination.size;
   const to = from + params.pagination.size - 1;
 
