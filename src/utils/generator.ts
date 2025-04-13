@@ -6,8 +6,12 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const specPath = path.join(__dirname, "../api/openapi-client.json");
-const outputPath = path.join(__dirname, "../api/openapi-client.d.ts");
+const name = process.argv[2] || "openapi-client";
+const inputFile = `${name}.json`;
+const outputFile = `${name}.d.ts`;
+
+const specPath = path.join(__dirname, "../api", inputFile);
+const outputPath = path.join(__dirname, "../api", outputFile);
 
 // Load and parse OpenAPI JSON
 const spec = JSON.parse(fs.readFileSync(specPath, "utf-8"));
@@ -16,7 +20,15 @@ function toNamespace(operationId: string): string {
   return operationId[0].toUpperCase() + operationId.slice(1);
 }
 
-const lines: string[] = ["declare namespace CompanionApi {"];
+console.log(name.split("-")[1]);
+
+const nameSpace = name.split("-")[1];
+
+const lines: string[] = [
+  `declare namespace ${
+    String(nameSpace[0]).toUpperCase() + String(nameSpace).slice(1)
+  }Api {`,
+];
 
 for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
   for (const [method, details] of Object.entries<any>(methods)) {
@@ -117,4 +129,4 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
 lines.push("}");
 
 fs.writeFileSync(outputPath, lines.join("\n"), "utf-8");
-console.log("✅ Type declarations written to openapi-client.d.ts");
+console.log(`✅ Type declarations written to ${outputFile}`);

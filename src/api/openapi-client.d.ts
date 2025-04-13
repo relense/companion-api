@@ -1,4 +1,4 @@
-declare namespace CompanionApi {
+declare namespace ClientApi {
   namespace CreateMessage {
     export type QueryParameters = {};
     export type PathParameters = {};
@@ -258,6 +258,32 @@ declare namespace CompanionApi {
       requestBody: RequestBody;
       headers?: any;
       responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace SendOpenaiMessages {
+    export type QueryParameters = {};
+    export type PathParameters = {};
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $200 {
+        id: string;
+        choices: array;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "sendOpenaiMessages";
+      method: "post";
+      expressPath: "/gpt";
+      openapiPath: "/gpt";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$500;
       successResponses: Responses.$200;
     }
   }

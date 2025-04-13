@@ -1,0 +1,73 @@
+{
+  "openapi": "3.0.0",
+  "security": [],
+  "info": {
+    "title": "Companion API Public",
+    "version": "0.0.1"
+  },
+  "paths": {
+    "/gpt": {
+      "post": {
+        "summary": "Send messages to OpenAI",
+        "operationId": "sendOpenaiMessages",
+        "tags": ["openai"],
+        "responses": {
+          "200": {
+            "description": "OpenAI responded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "object",
+                            "properties": {
+                              "role": { "type": "string" },
+                              "content": { "type": "string" }
+                            },
+                            "required": ["role", "content"]
+                          }
+                        },
+                        "required": ["message"]
+                      }
+                    }
+                  },
+                  "required": ["id", "choices"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000/api/public"
+    }
+  ],
+  "components": {
+    "schemas": {}
+  },
+  "tags": []
+}

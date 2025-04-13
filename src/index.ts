@@ -6,6 +6,8 @@ import swaggerUi from "swagger-ui-express";
 import { setupExpressApp } from "./expressServer.js";
 import { clientAuth } from "./auth/client.auth.js";
 import * as ClientRouter from "./controllers/client.controller.js";
+import * as PublicRouter from "./controllers/public.controller.js";
+import { publicAuth } from "./auth/public.auth.js";
 
 const startServer = () =>
   setupExpressApp({
@@ -22,6 +24,7 @@ const startServer = () =>
       },
       postInit: (app) => {
         app.use("/api", clientAuth, ClientRouter.router.baseRouter());
+        app.use("/api/public", publicAuth, PublicRouter.router.baseRouter());
       },
     },
   });

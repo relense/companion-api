@@ -8,6 +8,7 @@ import { typedRouter } from "../utils/expressUtils.js";
 import { messageService } from "../services/message.service.js";
 import { buildPaginatedResponse } from "../utils/paginationUtils.js";
 import { companionService } from "../services/companion.service.js";
+import { openaiServices } from "../services/openai.service.js";
 
 const router = typedRouter(Router());
 
@@ -27,7 +28,7 @@ router.baseRouter().use(
 //**
 // Post route: Create a message
 //  */
-router.post<CompanionApi.CreateMessage.Config>(
+router.post<ClientApi.CreateMessage.Config>(
   "/messages",
   async (req, res, next) => {
     try {
@@ -47,7 +48,7 @@ router.post<CompanionApi.CreateMessage.Config>(
 //**
 // Get route: Fetch one message by message id
 //  */
-router.get<CompanionApi.GetMessage.Config>(
+router.get<ClientApi.GetMessage.Config>(
   "/messages/:messageId",
   async (req, res, next) => {
     try {
@@ -66,7 +67,7 @@ router.get<CompanionApi.GetMessage.Config>(
 //**
 // Put route: Update one message by message id
 //  */
-router.put<CompanionApi.UpdateMessage.Config>(
+router.put<ClientApi.UpdateMessage.Config>(
   "/messages/:messageId",
   async (req, res, next) => {
     try {
@@ -86,7 +87,7 @@ router.put<CompanionApi.UpdateMessage.Config>(
 //**
 // Delete route: Delete one message by message id
 //  */
-router.delete<CompanionApi.DeleteMessage.Config>(
+router.delete<ClientApi.DeleteMessage.Config>(
   "/messages/:messageId",
   async (req, res, next) => {
     try {
@@ -107,7 +108,7 @@ router.delete<CompanionApi.DeleteMessage.Config>(
 //**
 // Post route: Create a message
 //  */
-router.post<CompanionApi.CreateCompanion.Config>(
+router.post<ClientApi.CreateCompanion.Config>(
   "/companions",
   async (req, res, next) => {
     try {
@@ -123,7 +124,7 @@ router.post<CompanionApi.CreateCompanion.Config>(
   }
 );
 
-router.get<CompanionApi.GetCompanions.Config>(
+router.get<ClientApi.GetCompanions.Config>(
   "/companions",
   async (req, res, next) => {
     try {
@@ -148,7 +149,7 @@ router.get<CompanionApi.GetCompanions.Config>(
   }
 );
 
-router.get<CompanionApi.GetCompanion.Config>(
+router.get<ClientApi.GetCompanion.Config>(
   "/companions/:companionId",
   async (req, res, next) => {
     try {
@@ -167,7 +168,7 @@ router.get<CompanionApi.GetCompanion.Config>(
 //**
 // Get route: Fetchs all the messages a companion has
 //  */
-router.get<CompanionApi.GetMessagesByCompanion.Config>(
+router.get<ClientApi.GetMessagesByCompanion.Config>(
   "/companions/:companionId/messages",
   async (req, res, next) => {
     try {
@@ -187,6 +188,22 @@ router.get<CompanionApi.GetMessagesByCompanion.Config>(
           pagination: response.pagination,
         })
       );
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// COMPANION ROUTES
+router.post<ClientApi.SendOpenaiMessages.Config>(
+  "/gpt",
+  async (req, res, next) => {
+    try {
+      const response = await openaiServices.sendOpenaiMessages({
+        context: req.context,
+      });
+
+      res.status(200).json(response);
     } catch (err) {
       next(err);
     }
