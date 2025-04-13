@@ -1,4 +1,4 @@
-declare namespace PublicApi {
+declare namespace OpenaiApi {
   namespace SendOpenaiMessages {
     export type QueryParameters = {};
     export type PathParameters = {};

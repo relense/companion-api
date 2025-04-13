@@ -2,6 +2,7 @@ import "dotenv/config";
 import { readFile } from "fs/promises";
 import { Application } from "express";
 import swaggerUi from "swagger-ui-express";
+import cors from "cors";
 
 import { setupExpressApp } from "./expressServer.js";
 import { clientAuth } from "./auth/client.auth.js";
@@ -21,15 +22,21 @@ const startServer = () =>
             app,
           });
           mountSwaggerUi({
-            filePath: "./api/openapi-public.json",
-            mountPoint: "/api-docs-public",
+            filePath: "./api/openapi-openai.json",
+            mountPoint: "/api-docs-openai",
             app,
           });
         }
       },
       postInit: (app) => {
+        app.use(
+          cors({
+            origin: "http://localhost:3000",
+            credentials: true,
+          })
+        );
         app.use("/api", clientAuth, ClientRouter.router.baseRouter());
-        app.use("/public", publicAuth, PublicRouter.router.baseRouter());
+        app.use("/openai", publicAuth, PublicRouter.router.baseRouter());
       },
     },
   });

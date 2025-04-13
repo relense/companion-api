@@ -21,7 +21,7 @@ router.baseRouter().use(
 );
 
 // ChatGPT ROUTES
-router.post<PublicApi.SendOpenaiMessages.Config>(
+router.post<OpenaiApi.SendOpenaiMessages.Config>(
   "/gpt",
   async (req, res, next) => {
     try {
@@ -37,7 +37,7 @@ router.post<PublicApi.SendOpenaiMessages.Config>(
   }
 );
 
-router.get<PublicApi.GetInitialMessage.Config>(
+router.get<OpenaiApi.GetInitialMessage.Config>(
   "/gpt",
   async (req, res, next) => {
     try {

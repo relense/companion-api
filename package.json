@@ -9,12 +9,13 @@
     "dev": "npx tsc && npm run copy:api && node --watch build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "gen:client": "tsx src/utils/generator.ts openapi-client",
-    "gen:public": "tsx src/utils/generator.ts openapi-public",
-    "gen:types": "npm run gen:client && npm run gen:public"
+    "gen:openai": "tsx src/utils/generator.ts openapi-openai",
+    "gen:types": "npm run gen:client && npm run gen:openai"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/swagger-ui-express": "^4.1.8",
     "openapi-typescript": "^7.6.1",
@@ -23,6 +24,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-openapi-validator": "^5.4.9",
