@@ -20,8 +20,6 @@ function toNamespace(operationId: string): string {
   return operationId[0].toUpperCase() + operationId.slice(1);
 }
 
-console.log(name.split("-")[1]);
-
 const nameSpace = name.split("-")[1];
 
 const lines: string[] = [

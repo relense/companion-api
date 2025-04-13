@@ -194,20 +194,4 @@ router.get<ClientApi.GetMessagesByCompanion.Config>(
   }
 );
 
-// COMPANION ROUTES
-router.post<ClientApi.SendOpenaiMessages.Config>(
-  "/gpt",
-  async (req, res, next) => {
-    try {
-      const response = await openaiServices.sendOpenaiMessages({
-        context: req.context,
-      });
-
-      res.status(200).json(response);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 export { router };

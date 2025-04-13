@@ -20,11 +20,16 @@ const startServer = () =>
             mountPoint: "/api-docs-client",
             app,
           });
+          mountSwaggerUi({
+            filePath: "./api/openapi-public.json",
+            mountPoint: "/api-docs-public",
+            app,
+          });
         }
       },
       postInit: (app) => {
         app.use("/api", clientAuth, ClientRouter.router.baseRouter());
-        app.use("/api/public", publicAuth, PublicRouter.router.baseRouter());
+        app.use("/public", publicAuth, PublicRouter.router.baseRouter());
       },
     },
   });

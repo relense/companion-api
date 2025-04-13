@@ -27,6 +27,22 @@ router.post<PublicApi.SendOpenaiMessages.Config>(
     try {
       const response = await openaiServices.sendOpenaiMessages({
         context: securityService.assertPublicContext(req.context),
+        messages: req.body.messages,
+      });
+
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get<PublicApi.GetInitialMessage.Config>(
+  "/gpt",
+  async (req, res, next) => {
+    try {
+      const response = await openaiServices.getInitialMessage({
+        context: securityService.assertPublicContext(req.context),
       });
 
       res.status(200).json(response);

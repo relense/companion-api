@@ -10,6 +10,83 @@
       "post": {
         "summary": "Send messages to OpenAI",
         "operationId": "sendOpenaiMessages",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": { "type": "string" },
+                        "content": { "type": "string" }
+                      },
+                      "required": ["role", "content"]
+                    }
+                  }
+                },
+                "required": ["messages"]
+              }
+            }
+          }
+        },
+
+        "tags": ["openai"],
+        "responses": {
+          "200": {
+            "description": "OpenAI responded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "object",
+                            "properties": {
+                              "role": { "type": "string" },
+                              "content": { "type": "string" }
+                            },
+                            "required": ["role", "content"]
+                          }
+                        },
+                        "required": ["message"]
+                      }
+                    }
+                  },
+                  "required": ["id", "choices"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get inicial message from OpenAi",
+        "operationId": "getInitialMessage",
         "tags": ["openai"],
         "responses": {
           "200": {
@@ -63,7 +140,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:4000/api/public"
+      "url": "http://localhost:4000/public"
     }
   ],
   "components": {
