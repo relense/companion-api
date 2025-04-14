@@ -22,13 +22,15 @@ async function getInitialMessage(params: {
 
   return response;
 }
-
 async function sendOpenaiMessages(params: {
   context: SecurityContext<"PUBLIC">;
   messages: ChatCompletionMessageParam[];
 }) {
   const messages: ChatCompletionMessageParam[] = [
-    { role: "system", content: prompts.outreachCompanionBasePrompt },
+    {
+      role: "system",
+      content: prompts.outreachCompanionBasePrompt,
+    },
     ...params.messages,
   ];
 
