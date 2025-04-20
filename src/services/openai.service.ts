@@ -3,6 +3,7 @@ import { SecurityContext } from "./security.service.js";
 import { ChatCompletionMessageParam } from "openai/resources.mjs";
 
 import prompts from "../prompts/outreacthCompanion.js";
+import promptUtil from "../prompts/outreacthCompanion.js";
 
 const openai = new OpenAI({
   apiKey: process.env.OOPEN_API_TEST_KEY,
@@ -12,7 +13,8 @@ async function getInitialMessage(params: {
   context: SecurityContext<"PUBLIC">;
 }) {
   const messages: ChatCompletionMessageParam[] = [
-    { role: "system", content: prompts.outreachCompanionBasePrompt },
+    { role: "system", content: prompts.generateOnBoardingPrompt() },
+    ...promptUtil.basicOnboardingConversation(),
   ];
 
   const response = await openai.chat.completions.create({
@@ -29,7 +31,27 @@ async function sendOpenaiMessages(params: {
   const messages: ChatCompletionMessageParam[] = [
     {
       role: "system",
-      content: prompts.outreachCompanionBasePrompt,
+      content: promptUtil.generateOnBoardingPrompt(),
+    },
+    ...params.messages,
+  ];
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages,
+  });
+
+  return response;
+}
+
+async function generateEmail(params: {
+  context: SecurityContext<"PUBLIC">;
+  messages: ChatCompletionMessageParam[];
+}) {
+  const messages: ChatCompletionMessageParam[] = [
+    {
+      role: "system",
+      content: promptUtil.generateEmailPrompt(params.messages),
     },
     ...params.messages,
   ];
@@ -45,6 +67,7 @@ async function sendOpenaiMessages(params: {
 const openaiServices = {
   getInitialMessage,
   sendOpenaiMessages,
+  generateEmail,
 };
 
 export { openaiServices };

@@ -52,4 +52,20 @@ router.get<OpenaiApi.GetInitialMessage.Config>(
   }
 );
 
+router.post<OpenaiApi.CreateEmail.Config>(
+  "/gpt-email",
+  async (req, res, next) => {
+    try {
+      const response = await openaiServices.generateEmail({
+        context: securityService.assertPublicContext(req.context),
+        messages: req.body.messages,
+      });
+
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 export { router };
