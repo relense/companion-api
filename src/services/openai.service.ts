@@ -14,11 +14,10 @@ async function getInitialMessage(params: {
 }) {
   const messages: ChatCompletionMessageParam[] = [
     { role: "system", content: prompts.generateOnBoardingPrompt() },
-    ...promptUtil.basicOnboardingConversation(),
   ];
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+    model: "gpt-3.5-turbo",
     messages,
   });
 
@@ -37,7 +36,7 @@ async function sendOpenaiMessages(params: {
   ];
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+    model: "gpt-3.5-turbo",
     messages,
   });
 
@@ -57,7 +56,7 @@ async function generateEmail(params: {
   ];
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+    model: "gpt-3.5-turbo",
     messages,
   });
 
