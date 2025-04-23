@@ -63,10 +63,10 @@ export const generateEmailPrompt = (
   BEFORE WRITING:
   1. **Analyze** the user's responses and tone.
   2. Choose the best-fitting outreach framework for their case, such as:
-    - AIDA (Attention–Interest–Desire–Action)
-    - PAS (Problem–Agitate–Solution)
-    - BAB (Before–After–Bridge)
-    - 4Ps (Picture–Promise–Proof–Push)
+    - AIDA (Attention-Interest-Desire-Action)
+    - PAS (Problem-Agitate-Solution)
+    - BAB (Before-After-Bridge)
+    - 4Ps (Picture-Promise-Proof-Push)
 
   Use the selected framework **implicitly** to structure the message. Do not mention the framework or describe what you're doing.
 
