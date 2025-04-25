@@ -173,7 +173,6 @@
         "x-order": 0
       }
     },
-
     "/messages/{messageId}": {
       "get": {
         "summary": "Get a specific message",
@@ -903,6 +902,45 @@
       "post": {
         "summary": "Send messages to OpenAI",
         "operationId": "sendOpenaiMessages",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "user",
+                          "assistant",
+                          "system",
+                          "tool",
+                          "function",
+                          "developer"
+                        ],
+                        "description": "The role of the message sender"
+                      },
+                      "content": {
+                        "type": "string",
+                        "description": "The content of the message"
+                      }
+                    },
+                    "required": ["role", "content"]
+                  },
+                  "companionId": {
+                    "type": "string",
+                    "description": "The ID of the companion"
+                  }
+                },
+                "required": ["message", "companionId"]
+              }
+            }
+          }
+        },
         "tags": ["openai"],
         "responses": {
           "200": {

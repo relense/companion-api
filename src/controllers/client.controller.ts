@@ -260,6 +260,23 @@ router.post<ClientApi.CreateMoreHistory.Config>(
   }
 );
 
+router.post<ClientApi.SendOpenaiMessages.Config>(
+  "/gpt",
+  async (req, res, next) => {
+    try {
+      const response = await openaiServices.sendOpenaiMessagesAndSave({
+        context: securityService.assertClientContext(req.context),
+        message: req.body.message,
+        companionId: req.body.companionId,
+      });
+
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 // COMPLETE AUTHENTICATION CLIENT ENDPOINTS
 
 //**

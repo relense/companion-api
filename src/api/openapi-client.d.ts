@@ -326,7 +326,10 @@ declare namespace ClientApi {
   namespace SendOpenaiMessages {
     export type QueryParameters = {};
     export type PathParameters = {};
-    export type RequestBody = {};
+    export interface RequestBody {
+      message: object;
+      companionId: string;
+    }
     namespace Responses {
       export interface $200 {
         id: string;
