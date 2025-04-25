@@ -44,13 +44,32 @@ async function sendOpenaiMessages(params: {
 }
 
 async function generateEmail(params: {
-  context: SecurityContext<"PUBLIC">;
+  context: SecurityContext<"CLIENT">;
   messages: ChatCompletionMessageParam[];
 }) {
   const messages: ChatCompletionMessageParam[] = [
     {
       role: "system",
       content: promptUtil.generateEmailPrompt(params.messages),
+    },
+  ];
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages,
+  });
+
+  return response;
+}
+
+async function sendMoreHistory(params: {
+  context: SecurityContext<"CLIENT">;
+  messages: ChatCompletionMessageParam[];
+}) {
+  const messages: ChatCompletionMessageParam[] = [
+    {
+      role: "system",
+      content: promptUtil.generateMoreHistoryPrompt(params.messages),
     },
     ...params.messages,
   ];
@@ -67,6 +86,7 @@ const openaiServices = {
   getInitialMessage,
   sendOpenaiMessages,
   generateEmail,
+  sendMoreHistory,
 };
 
 export { openaiServices };

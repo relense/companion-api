@@ -4,11 +4,13 @@ declare namespace ClientApi {
     export type PathParameters = {};
     export interface RequestBody {
       companionId: string;
+      role?: string;
       content: string;
     }
     namespace Responses {
       export interface $201 {
         messageId: string;
+        role?: string;
         content: string;
       }
       export interface $400 {
@@ -129,6 +131,36 @@ declare namespace ClientApi {
       headers?: any;
       responses: Responses.$200 | Responses.$400 | Responses.$500;
       successResponses: Responses.$200;
+    }
+  }
+  namespace CreateBulkMessage {
+    export type QueryParameters = {};
+    export type PathParameters = {};
+    export interface RequestBody {
+      companionId: string;
+      messages: array;
+    }
+    namespace Responses {
+      export interface $201 {
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "createBulkMessage";
+      method: "post";
+      expressPath: "/messages/bulk";
+      openapiPath: "/messages/bulk";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$201 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$201;
     }
   }
   namespace CreateCompanion {
@@ -284,6 +316,68 @@ declare namespace ClientApi {
       requestBody: RequestBody;
       headers?: any;
       responses: Responses.$200 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace CreateEmail {
+    export type QueryParameters = {};
+    export type PathParameters = {};
+    export interface RequestBody {
+      messages: array;
+    }
+    namespace Responses {
+      export interface $200 {
+        id: string;
+        choices: array;
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "createEmail";
+      method: "post";
+      expressPath: "/gpt/email";
+      openapiPath: "/gpt/email";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace CreateMoreHistory {
+    export type QueryParameters = {};
+    export type PathParameters = {};
+    export interface RequestBody {
+      messages: array;
+    }
+    namespace Responses {
+      export interface $200 {
+        id: string;
+        choices: array;
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "createMoreHistory";
+      method: "post";
+      expressPath: "/gpt/history";
+      openapiPath: "/gpt/history";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
       successResponses: Responses.$200;
     }
   }

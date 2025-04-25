@@ -26,6 +26,35 @@ router.baseRouter().use(
 //MESSAGES ROUTES
 
 //**
+// Post route: Create bulk messages
+//  */
+router.post<ClientApi.CreateBulkMessage.Config>(
+  "/messages/bulk",
+  async (req, res, next) => {
+    try {
+      const response = await messageService.insertBulkMessages({
+        context: securityService.assertClientContext(req.context),
+        companionId: req.body.companionId,
+        messages: req.body.messages,
+      });
+
+      res.status(200).json(
+        buildPaginatedResponse({
+          items: response.items,
+          total: response.itemCount,
+          pagination: {
+            page: 1,
+            size: 25,
+          },
+        })
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+//**
 // Post route: Create a message
 //  */
 router.post<ClientApi.CreateMessage.Config>(
@@ -34,7 +63,8 @@ router.post<ClientApi.CreateMessage.Config>(
     try {
       const response = await messageService.createMessage({
         context: securityService.assertClientContext(req.context),
-        message: req.body.content,
+        role: req.body.content,
+        content: req.body.content,
         companionId: req.body.companionId,
       });
 
@@ -74,7 +104,7 @@ router.put<ClientApi.UpdateMessage.Config>(
       const response = await messageService.updateMessage({
         context: securityService.assertClientContext(req.context),
         messageId: req.params.messageId,
-        message: req.body.content,
+        content: req.body.content,
       });
 
       res.status(200).json(response);
@@ -188,6 +218,40 @@ router.get<ClientApi.GetMessagesByCompanion.Config>(
           pagination: response.pagination,
         })
       );
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// OPEN AI CLIENT ENDPOINTS
+
+router.post<ClientApi.CreateEmail.Config>(
+  "/gpt/email",
+  async (req, res, next) => {
+    try {
+      const response = await openaiServices.generateEmail({
+        context: securityService.assertClientContext(req.context),
+        messages: req.body.messages,
+      });
+
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post<ClientApi.CreateMoreHistory.Config>(
+  "/gpt/history",
+  async (req, res, next) => {
+    try {
+      const response = await openaiServices.sendMoreHistory({
+        context: securityService.assertClientContext(req.context),
+        messages: req.body.messages,
+      });
+
+      res.status(200).json(response);
     } catch (err) {
       next(err);
     }

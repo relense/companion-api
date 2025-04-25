@@ -5,23 +5,55 @@ import { Pagination } from "../utils/paginationUtils.js";
 import { companionService } from "./companion.service.js";
 import { SecurityContext } from "./security.service.js";
 
+async function insertBulkMessages(params: {
+  context: SecurityContext<"CLIENT">;
+  messages: {
+    role: string;
+    content: string;
+  }[];
+  companionId: string;
+}) {
+  const messageData = params.messages.map((item) => {
+    return {
+      role: item.role,
+      content: item.content,
+      companionId: params.companionId,
+    };
+  });
+
+  let { data, error } = await supabase
+    .from("Message")
+    .insert(messageData)
+    .select()
+    .single();
+
+  if (!data || error) throw Errors.messageNotCreated(JSON.stringify(error));
+
+  return {
+    items: data,
+    itemCount: data.length,
+  };
+}
+
 async function createMessage(params: {
   context: SecurityContext<"CLIENT">;
-  message: string;
+  content: string;
+  role: string;
   companionId: string;
 }) {
   let { data, error } = await supabase
     .from("Message")
     .insert([
       {
-        content: params.message,
+        role: params.role,
+        content: params.content,
         companionId: params.companionId,
       },
     ])
     .select()
     .single();
 
-  if (!data || error) throw Errors.messageNotCreated(params.message);
+  if (!data || error) throw Errors.messageNotCreated(params.content);
 
   return Message.fromRow(data);
 }
@@ -65,11 +97,11 @@ async function getAllMessages(params: {
 async function updateMessage(params: {
   context: SecurityContext<"CLIENT">;
   messageId: string;
-  message: string;
+  content: string;
 }) {
   let { data, error } = await supabase
     .from("Message")
-    .update({ content: params.message })
+    .update({ content: params.content })
     .eq("messageId", params.messageId)
     .select();
 
@@ -126,6 +158,7 @@ async function getAllMessagesByCompanion(params: {
 }
 
 const messageService = {
+  insertBulkMessages,
   createMessage,
   getMessage,
   getAllMessages,

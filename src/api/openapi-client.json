@@ -22,6 +22,10 @@
                     "type": "string",
                     "description": "The id of the companion"
                   },
+                  "role": {
+                    "type": "string",
+                    "description": "The message role"
+                  },
                   "content": {
                     "type": "string",
                     "description": "The message content"
@@ -43,6 +47,10 @@
                     "messageId": {
                       "type": "string",
                       "description": "The ID of the created message"
+                    },
+                    "role": {
+                      "type": "string",
+                      "description": "The message role"
                     },
                     "content": {
                       "type": "string",
@@ -289,6 +297,110 @@
             }
           }
         }
+      }
+    },
+    "/messages/bulk": {
+      "post": {
+        "summary": "Create a bulk of messages",
+        "operationId": "createBulkMessage",
+        "tags": ["messages"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "companionId": {
+                    "type": "string",
+                    "description": "The id of the companion"
+                  },
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "description": "The message role"
+                        },
+                        "content": {
+                          "type": "string",
+                          "description": "The message content"
+                        }
+                      },
+                      "required": ["role", "content"]
+                    }
+                  }
+                },
+                "required": ["companionId", "messages"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "messageId": {
+                        "type": "string",
+                        "description": "The ID of the created message"
+                      },
+                      "content": {
+                        "type": "string",
+                        "description": "Content of the message"
+                      },
+                      "role": {
+                        "type": "string",
+                        "description": "Role of the message (e.g., 'user', 'assistant')"
+                      }
+                    },
+                    "required": ["messageId", "content", "role"]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "x-order": 0
       }
     },
     "/companions": {
@@ -740,6 +852,194 @@
                     }
                   },
                   "required": ["id", "choices"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gpt/email": {
+      "post": {
+        "summary": "Create and email with OpenAi",
+        "operationId": "createEmail",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": { "type": "string" },
+                        "content": { "type": "string" }
+                      },
+                      "required": ["role", "content"]
+                    }
+                  }
+                },
+                "required": ["messages"]
+              }
+            }
+          }
+        },
+        "tags": ["openai"],
+        "responses": {
+          "200": {
+            "description": "OpenAI responded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "object",
+                            "properties": {
+                              "role": { "type": "string" },
+                              "content": { "type": "string" }
+                            },
+                            "required": ["role", "content"]
+                          }
+                        },
+                        "required": ["message"]
+                      }
+                    }
+                  },
+                  "required": ["id", "choices"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gpt/history": {
+      "post": {
+        "summary": "Continue history",
+        "operationId": "createMoreHistory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": { "type": "string" },
+                        "content": { "type": "string" }
+                      },
+                      "required": ["role", "content"]
+                    }
+                  }
+                },
+                "required": ["messages"]
+              }
+            }
+          }
+        },
+        "tags": ["openai"],
+        "responses": {
+          "200": {
+            "description": "OpenAI responded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "object",
+                            "properties": {
+                              "role": { "type": "string" },
+                              "content": { "type": "string" }
+                            },
+                            "required": ["role", "content"]
+                          }
+                        },
+                        "required": ["message"]
+                      }
+                    }
+                  },
+                  "required": ["id", "choices"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
                 }
               }
             }
