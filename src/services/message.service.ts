@@ -21,17 +21,25 @@ async function insertBulkMessages(params: {
     };
   });
 
-  let { data, error } = await supabase
-    .from("Message")
-    .insert(messageData)
-    .select()
-    .single();
+  const insertedMessages = [];
 
-  if (!data || error) throw Errors.messageNotCreated(JSON.stringify(error));
+  for (const message of messageData) {
+    const { data, error } = await supabase
+      .from("Message")
+      .insert(message)
+      .select()
+      .single();
+
+    if (!data || error) {
+      throw Errors.messageNotCreated(JSON.stringify(error));
+    }
+
+    insertedMessages.push(data);
+  }
 
   return {
-    items: data,
-    itemCount: data.length,
+    items: insertedMessages,
+    itemCount: insertedMessages.length,
   };
 }
 

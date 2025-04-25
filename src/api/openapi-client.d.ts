@@ -6,7 +6,7 @@ declare namespace ClientApi {
       messages: array;
     }
     namespace Responses {
-      export interface $201 {
+      export interface $200 {
       }
       export interface $400 {
         message: string;
@@ -24,8 +24,8 @@ declare namespace ClientApi {
       queryParams: QueryParameters;
       requestBody: RequestBody;
       headers?: any;
-      responses: Responses.$201 | Responses.$400 | Responses.$500;
-      successResponses: Responses.$201;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
     }
   }
   namespace CreateMessage {
@@ -196,7 +196,8 @@ declare namespace ClientApi {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      name?: string;
+      name: string;
+      hasOnBoarding: boolean;
     }
     namespace Responses {
       export interface $201 {

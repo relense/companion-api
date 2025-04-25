@@ -27,6 +27,7 @@ async function completeUserAuth(params: {
   const response = await companionService.createCompanion({
     context: params.context,
     name: "Companion 1",
+    hasOnBoarding: true,
   });
 
   const createMessages = await messageService.insertBulkMessages({

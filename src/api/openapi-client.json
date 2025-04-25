@@ -42,33 +42,8 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Successfully created messages",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "messageId": {
-                        "type": "string",
-                        "description": "The ID of the created message"
-                      },
-                      "content": {
-                        "type": "string",
-                        "description": "Content of the message"
-                      },
-                      "role": {
-                        "type": "string",
-                        "description": "Role of the message (e.g., 'user', 'assistant')"
-                      }
-                    },
-                    "required": ["messageId", "content", "role"]
-                  }
-                }
-              }
-            }
+          "200": {
+            "description": "Successfully completed authentication"
           },
           "400": {
             "description": "Invalid request data",
@@ -518,8 +493,13 @@
                   "name": {
                     "type": "string",
                     "description": "the name of the companion"
+                  },
+                  "hasOnBoarding": {
+                    "type": "boolean",
+                    "description": "State to determine if the user has onboarded or not"
                   }
-                }
+                },
+                "required": ["name", "hasOnBoarding"]
               }
             }
           }

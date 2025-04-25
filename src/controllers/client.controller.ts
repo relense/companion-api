@@ -137,7 +137,7 @@ router.delete<ClientApi.DeleteMessage.Config>(
 // COMPANION ROUTES
 
 //**
-// Post route: Create a message
+// Post route: Create a companion
 //  */
 router.post<ClientApi.CreateCompanion.Config>(
   "/companions",
@@ -146,6 +146,7 @@ router.post<ClientApi.CreateCompanion.Config>(
       const response = await companionService.createCompanion({
         context: securityService.assertClientContext(req.context),
         name: req.body.name,
+        hasOnBoarding: req.body.hasOnBoarding,
       });
 
       res.status(201).json(response);
@@ -268,21 +269,12 @@ router.post<ClientApi.CompleteAuthentication.Config>(
   "/auth/complete",
   async (req, res, next) => {
     try {
-      const response = await userService.completeUserAuth({
+      await userService.completeUserAuth({
         context: securityService.assertClientContext(req.context),
         messages: req.body.messages,
       });
 
-      res.status(200).json(
-        buildPaginatedResponse({
-          items: response.items,
-          total: response.itemCount,
-          pagination: {
-            page: 1,
-            size: 25,
-          },
-        })
-      );
+      res.status(200);
     } catch (err) {
       next(err);
     }

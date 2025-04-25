@@ -3,6 +3,7 @@ type CompanionRow = {
   name: string;
   createdAt: string;
   updatedAt: string;
+  hasOnBoarding: boolean;
 };
 
 export class Companion {
@@ -10,7 +11,8 @@ export class Companion {
     public readonly companionId: string,
     public readonly name: string,
     public readonly createdAt: string,
-    public readonly updatedAt: string
+    public readonly updatedAt: string,
+    public readonly hasOnBoarding: boolean
   ) {}
 
   toResource() {
@@ -19,6 +21,7 @@ export class Companion {
       name: this.name,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      hasOnBoarding: this.hasOnBoarding,
     };
   }
 
@@ -27,7 +30,8 @@ export class Companion {
       row.companionId,
       row.name,
       row.createdAt,
-      row.updatedAt
+      row.updatedAt,
+      row.hasOnBoarding
     );
   }
 }

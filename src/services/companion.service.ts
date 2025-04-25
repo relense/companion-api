@@ -8,26 +8,14 @@ import { SecurityContext } from "./security.service.js";
 async function createCompanion(params: {
   context: SecurityContext<"CLIENT">;
   name: string | undefined;
+  hasOnBoarding: boolean;
 }) {
-  let numberOfCompanions = 0;
-
-  if (!params.name) {
-    let { data: allCompanions, error: errorAllCompanions } = await supabase
-      .from("Companion")
-      .select("*");
-
-    numberOfCompanions = allCompanions ? allCompanions.length : 0;
-  }
-
   let { data, error } = await supabase
     .from("Companion")
     .insert([
       {
-        name: params.name
-          ? params.name
-          : numberOfCompanions === 0
-          ? "Companion"
-          : `Companion ${numberOfCompanions + 1}`,
+        name: params.name ? params.name : "Companion",
+        hasOnBoarding: params.hasOnBoarding,
         userId: params.context.userId,
       },
     ])
