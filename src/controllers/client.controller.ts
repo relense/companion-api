@@ -9,6 +9,7 @@ import { messageService } from "../services/message.service.js";
 import { buildPaginatedResponse } from "../utils/paginationUtils.js";
 import { companionService } from "../services/companion.service.js";
 import { openaiServices } from "../services/openai.service.js";
+import { userService } from "../services/user.service.js";
 
 const router = typedRouter(Router());
 
@@ -252,6 +253,36 @@ router.post<ClientApi.CreateMoreHistory.Config>(
       });
 
       res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// COMPLETE AUTHENTICATION CLIENT ENDPOINTS
+
+//**
+// Post route: Create bulk messages
+//  */
+router.post<ClientApi.CompleteAuthentication.Config>(
+  "/auth/complete",
+  async (req, res, next) => {
+    try {
+      const response = await userService.completeUserAuth({
+        context: securityService.assertClientContext(req.context),
+        messages: req.body.messages,
+      });
+
+      res.status(200).json(
+        buildPaginatedResponse({
+          items: response.items,
+          total: response.itemCount,
+          pagination: {
+            page: 1,
+            size: 25,
+          },
+        })
+      );
     } catch (err) {
       next(err);
     }

@@ -34,7 +34,8 @@ async function createCompanion(params: {
     .select()
     .single();
 
-  if (!data) throw Errors.companionNotCreated(params.name || "");
+  if (!data || error)
+    throw Errors.companionNotCreated(error ? error.message : params.name || "");
 
   const final = Companion.fromRow(data);
 

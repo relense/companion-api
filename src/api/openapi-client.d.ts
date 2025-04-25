@@ -1,4 +1,33 @@
 declare namespace ClientApi {
+  namespace CompleteAuthentication {
+    export type QueryParameters = {};
+    export type PathParameters = {};
+    export interface RequestBody {
+      messages: array;
+    }
+    namespace Responses {
+      export interface $201 {
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "completeAuthentication";
+      method: "post";
+      expressPath: "/auth/complete";
+      openapiPath: "/auth/complete";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$201 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$201;
+    }
+  }
   namespace CreateMessage {
     export type QueryParameters = {};
     export type PathParameters = {};

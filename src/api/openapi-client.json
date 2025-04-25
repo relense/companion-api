@@ -6,6 +6,106 @@
     "version": "0.0.1"
   },
   "paths": {
+    "/auth/complete": {
+      "post": {
+        "summary": "Complete authentication",
+        "operationId": "completeAuthentication",
+        "tags": ["auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "description": "The message role"
+                        },
+                        "content": {
+                          "type": "string",
+                          "description": "The message content"
+                        }
+                      },
+                      "required": ["role", "content"]
+                    }
+                  }
+                },
+                "required": ["messages"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "messageId": {
+                        "type": "string",
+                        "description": "The ID of the created message"
+                      },
+                      "content": {
+                        "type": "string",
+                        "description": "Content of the message"
+                      },
+                      "role": {
+                        "type": "string",
+                        "description": "Role of the message (e.g., 'user', 'assistant')"
+                      }
+                    },
+                    "required": ["messageId", "content", "role"]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        },
+        "x-order": 0
+      }
+    },
     "/messages": {
       "post": {
         "summary": "Create a Message",
