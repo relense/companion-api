@@ -930,34 +930,33 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": {
-                    "type": "object",
-                    "properties": {
-                      "role": {
-                        "type": "string",
-                        "enum": [
-                          "user",
-                          "assistant",
-                          "system",
-                          "tool",
-                          "function",
-                          "developer"
-                        ],
-                        "description": "The role of the message sender"
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "assistant",
+                            "system",
+                            "tool",
+                            "function",
+                            "developer"
+                          ]
+                        },
+                        "content": { "type": "string" }
                       },
-                      "content": {
-                        "type": "string",
-                        "description": "The content of the message"
-                      }
-                    },
-                    "required": ["role", "content"]
+                      "required": ["role", "content"]
+                    }
                   },
                   "companionId": {
                     "type": "string",
                     "description": "The ID of the companion"
                   }
                 },
-                "required": ["message", "companionId"]
+                "required": ["messages", "companionId"]
               }
             }
           }

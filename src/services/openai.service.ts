@@ -46,15 +46,17 @@ async function sendOpenaiMessages(params: {
 
 async function sendOpenaiMessagesAndSave(params: {
   context: SecurityContext<"CLIENT">;
-  message: ClientApi.SendOpenaiMessages.RequestBody["message"];
+  messages: ClientApi.SendOpenaiMessages.RequestBody["messages"];
   companionId: string;
 }) {
-  await messageService.createMessage({
-    context: params.context,
-    content: params.message.content,
-    role: params.message.role,
-    companionId: params.companionId,
-  });
+  for (const message of params.messages) {
+    await messageService.createMessage({
+      context: params.context,
+      content: message.content,
+      role: message.role,
+      companionId: params.companionId,
+    });
+  }
 
   const companionMessages = await messageService.getAllMessagesByCompanion({
     context: params.context,
