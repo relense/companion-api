@@ -26,14 +26,14 @@ async function getInitialMessage(params: {
 }
 async function sendOpenaiMessages(params: {
   context: SecurityContext<"PUBLIC">;
-  messages: ChatCompletionMessageParam[];
+  messages: OpenaiApi.SendOpenaiMessages.RequestBody["messages"];
 }) {
   const messages: ChatCompletionMessageParam[] = [
     {
       role: "system",
       content: promptUtil.generateOnBoardingPrompt(),
     },
-    ...params.messages,
+    ...(params.messages as ChatCompletionMessageParam[]),
   ];
 
   const response = await openai.chat.completions.create({
@@ -46,14 +46,20 @@ async function sendOpenaiMessages(params: {
 
 async function sendOpenaiMessagesAndSave(params: {
   context: SecurityContext<"CLIENT">;
-  message: { content: string; role: "assistant" | "user" };
+  message: ClientApi.SendOpenaiMessages.RequestBody["message"];
   companionId: string;
 }) {
-  messageService.createMessage({
+  await messageService.createMessage({
     context: params.context,
     content: params.message.content,
     role: params.message.role,
     companionId: params.companionId,
+  });
+
+  const companionMessages = await messageService.getAllMessagesByCompanion({
+    context: params.context,
+    companionId: params.companionId,
+    pagination: { page: 1, size: 25 },
   });
 
   const messages: ChatCompletionMessageParam[] = [
@@ -61,7 +67,7 @@ async function sendOpenaiMessagesAndSave(params: {
       role: "system",
       content: promptUtil.generateOnBoardingPrompt(),
     },
-    params.message,
+    ...companionMessages.items,
   ];
 
   const response = await openai.chat.completions.create({
@@ -74,7 +80,7 @@ async function sendOpenaiMessagesAndSave(params: {
 
 async function generateEmail(params: {
   context: SecurityContext<"CLIENT">;
-  messages: ChatCompletionMessageParam[];
+  messages: ClientApi.CreateEmail.RequestBody["messages"];
 }) {
   const messages: ChatCompletionMessageParam[] = [
     {
@@ -93,15 +99,15 @@ async function generateEmail(params: {
 
 async function sendMoreHistory(params: {
   context: SecurityContext<"CLIENT">;
-  messages: ChatCompletionMessageParam[];
+  messages: ClientApi.CreateMoreHistory.RequestBody["messages"];
 }) {
-  const messages: ChatCompletionMessageParam[] = [
+  const messages = [
     {
       role: "system",
       content: promptUtil.generateMoreHistoryPrompt(params.messages),
     },
     ...params.messages,
-  ];
+  ] as ChatCompletionMessageParam[];
 
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",

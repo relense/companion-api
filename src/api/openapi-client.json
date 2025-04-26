@@ -43,7 +43,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully completed authentication"
+            "description": "Successfully completed authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid request data",
@@ -601,13 +608,15 @@
                           "createdAt": { "type": "string" },
                           "updatedAt": {
                             "type": "string"
-                          }
+                          },
+                          "hasOnBoarding": { "type": "boolean" }
                         },
                         "required": [
                           "companionId",
                           "name",
                           "createdAt",
-                          "updatedAt"
+                          "updatedAt",
+                          "hasOnBoarding"
                         ]
                       }
                     },
@@ -804,6 +813,17 @@
                         "properties": {
                           "messageId": { "type": "string" },
                           "content": { "type": "string" },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "user",
+                              "assistant",
+                              "system",
+                              "tool",
+                              "function",
+                              "developer"
+                            ]
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time"
@@ -815,6 +835,7 @@
                         },
                         "required": [
                           "messageId",
+                          "role",
                           "content",
                           "createdAt",
                           "updatedAt"
@@ -960,7 +981,7 @@
                             "type": "object",
                             "properties": {
                               "role": { "type": "string" },
-                              "content": { "type": "string" }
+                              "content": { "type": "string", "nullable": true }
                             },
                             "required": ["role", "content"]
                           }
@@ -1038,7 +1059,7 @@
                             "type": "object",
                             "properties": {
                               "role": { "type": "string" },
-                              "content": { "type": "string" }
+                              "content": { "type": "string", "nullable": true }
                             },
                             "required": ["role", "content"]
                           }
@@ -1101,7 +1122,17 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "role": { "type": "string" },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "assistant",
+                            "system",
+                            "tool",
+                            "function",
+                            "developer"
+                          ]
+                        },
                         "content": { "type": "string" }
                       },
                       "required": ["role", "content"]
@@ -1131,8 +1162,18 @@
                           "message": {
                             "type": "object",
                             "properties": {
-                              "role": { "type": "string" },
-                              "content": { "type": "string" }
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "user",
+                                  "assistant",
+                                  "system",
+                                  "tool",
+                                  "function",
+                                  "developer"
+                                ]
+                              },
+                              "content": { "type": "string", "nullable": true }
                             },
                             "required": ["role", "content"]
                           }

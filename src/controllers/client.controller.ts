@@ -266,8 +266,8 @@ router.post<ClientApi.SendOpenaiMessages.Config>(
     try {
       const response = await openaiServices.sendOpenaiMessagesAndSave({
         context: securityService.assertClientContext(req.context),
-        message: req.body.message,
         companionId: req.body.companionId,
+        message: req.body.message,
       });
 
       res.status(200).json(response);

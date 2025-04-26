@@ -22,7 +22,17 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "role": { "type": "string" },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "assistant",
+                            "system",
+                            "tool",
+                            "function",
+                            "developer"
+                          ]
+                        },
                         "content": { "type": "string" }
                       },
                       "required": ["role", "content"]
@@ -53,8 +63,18 @@
                           "message": {
                             "type": "object",
                             "properties": {
-                              "role": { "type": "string" },
-                              "content": { "type": "string" }
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "user",
+                                  "assistant",
+                                  "system",
+                                  "tool",
+                                  "function",
+                                  "developer"
+                                ]
+                              },
+                              "content": { "type": "string", "nullable": true }
                             },
                             "required": ["role", "content"]
                           }
@@ -121,8 +141,18 @@
                           "message": {
                             "type": "object",
                             "properties": {
-                              "role": { "type": "string" },
-                              "content": { "type": "string" }
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "user",
+                                  "assistant",
+                                  "system",
+                                  "tool",
+                                  "function",
+                                  "developer"
+                                ]
+                              },
+                              "content": { "type": "string", "nullable": true }
                             },
                             "required": ["role", "content"]
                           }

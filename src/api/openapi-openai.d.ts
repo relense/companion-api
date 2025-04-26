@@ -3,12 +3,12 @@ declare namespace OpenaiApi {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      messages: array;
+      messages: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string; }[];
     }
     namespace Responses {
       export interface $200 {
         id: string;
-        choices: array;
+        choices: { message: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string | null; }; }[];
       }
       export interface $400 {
         message: string;
@@ -37,7 +37,7 @@ declare namespace OpenaiApi {
     namespace Responses {
       export interface $200 {
         id: string;
-        choices: array;
+        choices: { message: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string | null; }; }[];
       }
       export interface $400 {
         message: string;

@@ -3,7 +3,7 @@ declare namespace ClientApi {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      messages: array;
+      messages: { role: string; content: string; }[];
     }
     namespace Responses {
       export interface $200 {
@@ -167,7 +167,7 @@ declare namespace ClientApi {
     export type PathParameters = {};
     export interface RequestBody {
       companionId: string;
-      messages: array;
+      messages: { role: string; content: string; }[];
     }
     namespace Responses {
       export interface $201 {
@@ -233,9 +233,9 @@ declare namespace ClientApi {
     export type RequestBody = {};
     namespace Responses {
       export interface $200 {
-        items: array;
-        meta: object;
-        links: object;
+        items: { companionId: string; name: string; createdAt: string; updatedAt: string; hasOnBoarding: boolean; }[];
+        meta: { pageSize: number; previousPage?: number; nextPage?: number; pageCount: number; itemCount: number; };
+        links: { self: string; next?: string; prev?: string; };
       }
       export interface $400 {
         message: string;
@@ -299,9 +299,9 @@ declare namespace ClientApi {
     export type RequestBody = {};
     namespace Responses {
       export interface $200 {
-        items: array;
-        meta: object;
-        links: object;
+        items: { messageId: string; content: string; role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; createdAt: string; updatedAt: string; }[];
+        meta: { pageSize: number; previousPage?: number; nextPage?: number; pageCount: number; itemCount: number; };
+        links: { self: string; next?: string; prev?: string; };
       }
       export interface $400 {
         message: string;
@@ -327,13 +327,13 @@ declare namespace ClientApi {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      message: object;
+      message: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string; };
       companionId: string;
     }
     namespace Responses {
       export interface $200 {
         id: string;
-        choices: array;
+        choices: { message: { role: string; content: string | null; }; }[];
       }
       export interface $500 {
         message: string;
@@ -356,12 +356,12 @@ declare namespace ClientApi {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      messages: array;
+      messages: { role: string; content: string; }[];
     }
     namespace Responses {
       export interface $200 {
         id: string;
-        choices: array;
+        choices: { message: { role: string; content: string | null; }; }[];
       }
       export interface $400 {
         message: string;
@@ -387,12 +387,12 @@ declare namespace ClientApi {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      messages: array;
+      messages: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string; }[];
     }
     namespace Responses {
       export interface $200 {
         id: string;
-        choices: array;
+        choices: { message: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string | null; }; }[];
       }
       export interface $400 {
         message: string;

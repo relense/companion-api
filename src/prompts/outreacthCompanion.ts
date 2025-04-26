@@ -47,11 +47,12 @@ During onboarding, always guide the conversation forward and keep momentum. Your
   `;
 };
 
-export const generateEmailPrompt = (
-  userResponses: ChatCompletionMessageParam[]
-) => {
+export const generateEmailPrompt = (userResponses: any) => {
   const formattedResponses = userResponses
-    .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
+    .map(
+      (m: { role: string; content: any }) =>
+        `${m.role.toUpperCase()}: ${m.content}`
+    )
     .join("\n");
 
   return `You are the Cold Outreach Companion — a friendly, helpful AI whose mission is to help users create high-converting cold outreach messages based on what you've learned about them during onboarding.
@@ -194,11 +195,12 @@ const basicOnboardingConversation = () => {
   return conversation;
 };
 
-export const generateMoreHistoryPrompt = (
-  userResponses: ChatCompletionMessageParam[]
-) => {
+export const generateMoreHistoryPrompt = (userResponses: any) => {
   const formattedResponses = userResponses
-    .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
+    .map(
+      (m: { role: string; content: any }) =>
+        `${m.role.toUpperCase()}: ${m.content}`
+    )
     .join("\n");
 
   return `You are the Cold Outreach Companion — a strategic AI built to gather deeper insights from the user to help craft better cold outreach. You are not here to generate outreach messages. Those will be created in a separate space based on the information collected here.

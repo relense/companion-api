@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// ⛏ Fix __dirname for ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -13,13 +12,62 @@ const outputFile = `${name}.d.ts`;
 const specPath = path.join(__dirname, "../api", inputFile);
 const outputPath = path.join(__dirname, "../api", outputFile);
 
-// Load and parse OpenAPI JSON
 const spec = JSON.parse(fs.readFileSync(specPath, "utf-8"));
 
 function toNamespace(operationId: string): string {
   return operationId[0].toUpperCase() + operationId.slice(1);
 }
 
+interface SchemaObject {
+  type?: string | string[];
+  enum?: string[];
+  nullable?: boolean;
+  items?: SchemaObject;
+  properties?: Record<string, SchemaObject>;
+  required?: string[];
+}
+
+function getType(schema: SchemaObject | undefined): string {
+  if (!schema) return "any";
+
+  // Handle multiple types like ["string", "null"]
+  if (Array.isArray(schema.type)) {
+    return schema.type
+      .map((t) => (t === "null" ? "null" : getType({ type: t })))
+      .join(" | ");
+  }
+
+  // Handle enums
+  if (schema.enum) {
+    return schema.enum.map((v) => `'${v}'`).join(" | ");
+  }
+
+  // Handle arrays
+  if (schema.type === "array") {
+    return `${getType(schema.items)}[]`;
+  }
+
+  // Handle objects
+  if (schema.type === "object") {
+    if (schema.properties) {
+      const props = Object.entries(schema.properties)
+        .map(([key, val]) => {
+          const optional = schema.required?.includes(key) ? "" : "?";
+          return `${key}${optional}: ${getType(val)};`;
+        })
+        .join(" ");
+      return `{ ${props} }`;
+    }
+    return "{ [key: string]: any }";
+  }
+
+  if (schema.type && schema.nullable) {
+    return `${schema.type} | null`;
+  }
+
+  // Default fallback
+  return schema.type || "any";
+}
 const nameSpace = name.split("-")[1];
 
 const lines: string[] = [
@@ -36,7 +84,6 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
     const ns = toNamespace(operationId);
     lines.push(`  namespace ${ns} {`);
 
-    // --- Parameters (Query + Path) ---
     const queryParams = (details.parameters || []).filter(
       (p: any) => p.in === "query"
     );
@@ -47,7 +94,7 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
     if (queryParams.length > 0) {
       lines.push("    export interface QueryParameters {");
       for (const param of queryParams) {
-        const type = param.schema?.type || "string";
+        const type = getType(param.schema);
         lines.push(`      ${param.name}${param.required ? "" : "?"}: ${type};`);
       }
       lines.push("    }");
@@ -58,7 +105,7 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
     if (pathParams.length > 0) {
       lines.push("    export interface PathParameters {");
       for (const param of pathParams) {
-        const type = param.schema?.type || "string";
+        const type = getType(param.schema);
         lines.push(`      ${param.name}${param.required ? "" : "?"}: ${type};`);
       }
       lines.push("    }");
@@ -66,23 +113,21 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
       lines.push("    export type PathParameters = {};");
     }
 
-    // --- Request Body ---
     const requestBodySchema =
       details?.requestBody?.content?.["application/json"]?.schema;
-    if (requestBodySchema && requestBodySchema.properties) {
+    if (requestBodySchema) {
       lines.push("    export interface RequestBody {");
       for (const [prop, def] of Object.entries<any>(
-        requestBodySchema.properties
+        requestBodySchema.properties || {}
       )) {
         const required = requestBodySchema.required?.includes(prop);
-        lines.push(`      ${prop}${required ? "" : "?"}: ${def.type};`);
+        lines.push(`      ${prop}${required ? "" : "?"}: ${getType(def)};`);
       }
       lines.push("    }");
     } else {
       lines.push("    export type RequestBody = {};");
     }
 
-    // --- Responses ---
     lines.push("    namespace Responses {");
     for (const [status, resp] of Object.entries<any>(details.responses)) {
       const respSchema = resp?.content?.["application/json"]?.schema;
@@ -90,14 +135,13 @@ for (const [routePath, methods] of Object.entries<any>(spec.paths)) {
       if (respSchema?.properties) {
         for (const [prop, def] of Object.entries<any>(respSchema.properties)) {
           const required = respSchema.required?.includes(prop);
-          lines.push(`        ${prop}${required ? "" : "?"}: ${def.type};`);
+          lines.push(`        ${prop}${required ? "" : "?"}: ${getType(def)};`);
         }
       }
       lines.push("      }");
     }
     lines.push("    }");
 
-    // --- Config Interface ---
     const firstResponse = Object.keys(details.responses)[0];
     const responseUnion = Object.keys(details.responses)
       .map((code) => `Responses.$${code}`)
