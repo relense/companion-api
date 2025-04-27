@@ -1136,9 +1136,10 @@
                       },
                       "required": ["role", "content"]
                     }
-                  }
+                  },
+                  "companionId": { "type": "string" }
                 },
-                "required": ["messages"]
+                "required": ["messages", "companionId"]
               }
             }
           }

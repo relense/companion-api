@@ -143,7 +143,7 @@ async function getAllMessagesByCompanion(params: {
   pagination: Pagination;
   companionId: string;
 }) {
-  await companionService.getCompanion({
+  const companion = await companionService.getCompanion({
     context: params.context,
     companionId: params.companionId,
   });
@@ -154,34 +154,45 @@ async function getAllMessagesByCompanion(params: {
   let { data, error } = await supabase
     .from("Message")
     .select("*")
-    .eq("companionId", params.companionId)
+    .eq("companionId", companion.companionId)
     .range(from, to);
 
   if (!data || error) throw new Error("Fetch failed");
 
-  const response = await openaiServices.sendOpenaiMessages({
-    context: params.context,
-    messages: data,
-  });
+  let newItems: {
+    messageId: string;
+    role: "assistant" | "user";
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    companionId: string;
+  }[] = [];
 
-  if (data[data.length - 1].role === "user") {
-    const newMessage = createMessage({
+  if (data.length > 0) {
+    const response = await openaiServices.sendOpenaiMessages({
       context: params.context,
-      companionId: params.companionId,
-      content: response.choices[0].message.content || "...",
-      role: "assistant",
+      messages: data,
     });
 
-    if (response) {
-      data.push(newMessage);
+    if (data[data.length - 1].role === "user") {
+      const newMessage = await createMessage({
+        context: params.context,
+        companionId: params.companionId,
+        content: response.choices[0].message.content || "...",
+        role: "assistant",
+      });
+
+      if (response) {
+        data.push(newMessage);
+      }
     }
+
+    newItems = data.map(Message.fromRow).map((msg) => msg.toResource());
   }
 
-  const newItems = data.map(Message.fromRow).map((msg) => msg.toResource());
-
   return {
-    items: newItems,
-    itemCount: data.length,
+    items: data,
+    itemCount: newItems.length,
     pagination: params.pagination,
   };
 }

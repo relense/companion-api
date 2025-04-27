@@ -72,10 +72,11 @@ async function updateCompanion(params: {
   context: SecurityContext<"CLIENT">;
   companionId: string;
   name: string;
+  hasOnBoarding: boolean;
 }) {
   let { data, error } = await supabase
     .from("Companion")
-    .update({ name: params.name })
+    .update({ name: params.name, hasOnBoarding: params.hasOnBoarding })
     .eq("companionId", params.companionId)
     .select();
 

@@ -250,6 +250,7 @@ router.post<ClientApi.CreateMoreHistory.Config>(
       const response = await openaiServices.sendMoreHistory({
         context: securityService.assertClientContext(req.context),
         messages: req.body.messages,
+        companionId: req.body.companionId,
       });
 
       res.status(200).json(response);
