@@ -38,6 +38,7 @@ async function getCompanion(params: {
     .from("Companion")
     .select("*")
     .eq("companionId", params.companionId)
+    .eq("userId", params.context.userId)
     .single();
 
   if (!data || error) throw Errors.companionNotFound(params.companionId);
@@ -55,6 +56,7 @@ async function getAllCompanions(params: {
   let { data, error } = await supabase
     .from("Companion")
     .select("*")
+    .eq("userId", params.context.userId)
     .range(from, to);
 
   if (!data) throw Errors.companionsNotFound();
