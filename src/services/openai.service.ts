@@ -25,7 +25,7 @@ async function getInitialMessage(params: {
   return response;
 }
 async function sendOpenaiMessages(params: {
-  context: SecurityContext<"PUBLIC">;
+  context: SecurityContext<"PUBLIC"> | SecurityContext<"CLIENT">;
   messages: OpenaiApi.SendOpenaiMessages.RequestBody["messages"];
 }) {
   const messages: ChatCompletionMessageParam[] = [
@@ -46,23 +46,35 @@ async function sendOpenaiMessages(params: {
 
 async function sendOpenaiMessagesAndSave(params: {
   context: SecurityContext<"CLIENT">;
-  messages: ClientApi.SendOpenaiMessages.RequestBody["messages"];
+  messages: ClientApi.SendMessagesAndSave.RequestBody["messages"];
   companionId: string;
 }) {
-  for (const message of params.messages) {
-    await messageService.createMessage({
-      context: params.context,
-      content: message.content,
-      role: message.role,
-      companionId: params.companionId,
-    });
-  }
-
   const companionMessages = await messageService.getAllMessagesByCompanion({
     context: params.context,
     companionId: params.companionId,
     pagination: { page: 1, size: 25 },
   });
+
+  if (
+    companionMessages.items[companionMessages.items.length - 1].role ===
+    "assistant"
+  ) {
+    await messageService.createMessage({
+      context: params.context,
+      content: params.messages[params.messages.length - 1].content,
+      role: params.messages[params.messages.length - 1].role,
+      companionId: params.companionId,
+    });
+  } else {
+    for (const message of params.messages) {
+      await messageService.createMessage({
+        context: params.context,
+        content: message.content,
+        role: message.role,
+        companionId: params.companionId,
+      });
+    }
+  }
 
   const messages: ChatCompletionMessageParam[] = [
     {

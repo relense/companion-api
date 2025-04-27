@@ -3,6 +3,7 @@ import { Message } from "../models/Message.js";
 import { Errors } from "../utils/errors.js";
 import { Pagination } from "../utils/paginationUtils.js";
 import { companionService } from "./companion.service.js";
+import { openaiServices } from "./openai.service.js";
 import { SecurityContext } from "./security.service.js";
 
 async function insertBulkMessages(params: {
@@ -158,8 +159,28 @@ async function getAllMessagesByCompanion(params: {
 
   if (!data || error) throw new Error("Fetch failed");
 
+  const response = await openaiServices.sendOpenaiMessages({
+    context: params.context,
+    messages: data,
+  });
+
+  if (data[data.length - 1].role === "user") {
+    const newMessage = createMessage({
+      context: params.context,
+      companionId: params.companionId,
+      content: response.choices[0].message.content || "...",
+      role: "assistant",
+    });
+
+    if (response) {
+      data.push(newMessage);
+    }
+  }
+
+  const newItems = data.map(Message.fromRow).map((msg) => msg.toResource());
+
   return {
-    items: data.map(Message.fromRow).map((msg) => msg.toResource()),
+    items: newItems,
     itemCount: data.length,
     pagination: params.pagination,
   };

@@ -227,7 +227,6 @@ router.get<ClientApi.GetMessagesByCompanion.Config>(
 );
 
 // OPEN AI CLIENT ENDPOINTS
-
 router.post<ClientApi.CreateEmail.Config>(
   "/gpt/email",
   async (req, res, next) => {
@@ -260,8 +259,8 @@ router.post<ClientApi.CreateMoreHistory.Config>(
   }
 );
 
-router.post<ClientApi.SendOpenaiMessages.Config>(
-  "/gpt",
+router.post<ClientApi.SendMessagesAndSave.Config>(
+  "/gpt/messages",
   async (req, res, next) => {
     try {
       const response = await openaiServices.sendOpenaiMessagesAndSave({
