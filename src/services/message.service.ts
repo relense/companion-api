@@ -168,26 +168,31 @@ async function getAllMessagesByCompanion(params: {
     companionId: string;
   }[] = [];
 
-  if (data.length > 0) {
+  if (data.length > 0 && data[data.length - 1].role === "user") {
     const response = await openaiServices.sendOpenaiMessages({
       context: params.context,
       messages: data,
     });
 
-    if (data[data.length - 1].role === "user") {
-      const newMessage = await createMessage({
-        context: params.context,
-        companionId: params.companionId,
-        content: response.choices[0].message.content || "...",
-        role: "assistant",
-      });
+    if (response) {
+      if (response.choices?.[0]?.message?.content) {
+        let content = response.choices[0].message.content;
 
-      if (response) {
+        if (content.includes("<ONBOARDING_COMPLETE>")) {
+          content = content.replace("<ONBOARDING_COMPLETE>", "").trim();
+        }
+
+        const newMessage = await createMessage({
+          context: params.context,
+          companionId: params.companionId,
+          content: content,
+          role: "assistant",
+        });
         data.push(newMessage);
       }
-    }
 
-    newItems = data.map(Message.fromRow).map((msg) => msg.toResource());
+      newItems = data.map(Message.fromRow).map((msg) => msg.toResource());
+    }
   }
 
   return {
