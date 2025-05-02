@@ -159,45 +159,45 @@ async function getAllMessagesByCompanion(params: {
 
   if (!data || error) throw new Error("Fetch failed");
 
-  let newItems: {
-    messageId: string;
-    role: "assistant" | "user";
-    content: string;
-    createdAt: string;
-    updatedAt: string;
-    companionId: string;
-  }[] = [];
+  // let newItems: {
+  //   messageId: string;
+  //   role: "assistant" | "user";
+  //   content: string;
+  //   createdAt: string;
+  //   updatedAt: string;
+  //   companionId: string;
+  // }[] = [];
 
-  if (data.length > 0 && data[data.length - 1].role === "user") {
-    const response = await openaiServices.sendOpenaiMessages({
-      context: params.context,
-      messages: data,
-    });
+  // if (data.length > 0 && data[data.length - 1].role === "user") {
+  //   const response = await openaiServices.sendOpenaiMessages({
+  //     context: params.context,
+  //     messages: data,
+  //   });
 
-    if (response) {
-      if (response.choices?.[0]?.message?.content) {
-        let content = response.choices[0].message.content;
+  //   if (response) {
+  //     if (response.choices?.[0]?.message?.content) {
+  //       let content = response.choices[0].message.content;
 
-        if (content.includes("<ONBOARDING_COMPLETE>")) {
-          content = content.replace("<ONBOARDING_COMPLETE>", "").trim();
-        }
+  //       if (content.includes("<ONBOARDING_COMPLETE>")) {
+  //         content = content.replace("<ONBOARDING_COMPLETE>", "").trim();
+  //       }
 
-        const newMessage = await createMessage({
-          context: params.context,
-          companionId: params.companionId,
-          content: content,
-          role: "assistant",
-        });
-        data.push(newMessage);
-      }
+  //       const newMessage = await createMessage({
+  //         context: params.context,
+  //         companionId: params.companionId,
+  //         content: content,
+  //         role: "assistant",
+  //       });
+  //       data.push(newMessage);
+  //     }
 
-      newItems = data.map(Message.fromRow).map((msg) => msg.toResource());
-    }
-  }
+  //     newItems = data.map(Message.fromRow).map((msg) => msg.toResource());
+  //   }
+  // }
 
   return {
     items: data,
-    itemCount: newItems.length,
+    itemCount: data.length,
     pagination: params.pagination,
   };
 }

@@ -24,25 +24,30 @@ async function completeUserAuth(params: {
     content: string;
   }[];
 }) {
-  const response = await companionService.createCompanion({
+  const companions = await companionService.getAllCompanions({
     context: params.context,
-    name: "Companion 1",
-    hasOnBoarding: true,
+    pagination: { page: 1, size: 3 },
   });
 
-  const createMessages = await messageService.insertBulkMessages({
-    context: params.context,
-    companionId: response.companionId,
-    messages: params.messages,
-  });
+  if (companions.items.length === 0) {
+    const response = await companionService.createCompanion({
+      context: params.context,
+      name: "Companion 1",
+      hasOnBoarding: true,
+    });
 
-  if (!response || !createMessages)
-    throw Errors.messageNotCreated(JSON.stringify("Erro"));
+    const createMessages = await messageService.insertBulkMessages({
+      context: params.context,
+      companionId: response.companionId,
+      messages: params.messages,
+    });
 
-  return {
-    items: createMessages.items,
-    itemCount: createMessages.itemCount,
-  };
+    if (!response || !createMessages) {
+      throw Errors.messageNotCreated(JSON.stringify("Error"));
+    }
+  }
+
+  return companions;
 }
 
 const userService = {

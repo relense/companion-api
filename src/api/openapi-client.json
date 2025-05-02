@@ -930,33 +930,31 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "messages": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "role": {
-                          "type": "string",
-                          "enum": [
-                            "user",
-                            "assistant",
-                            "system",
-                            "tool",
-                            "function",
-                            "developer"
-                          ]
-                        },
-                        "content": { "type": "string" }
+                  "message": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "user",
+                          "assistant",
+                          "system",
+                          "tool",
+                          "function",
+                          "developer"
+                        ]
                       },
-                      "required": ["role", "content"]
-                    }
+                      "content": { "type": "string" }
+                    },
+                    "required": ["role", "content"]
                   },
+
                   "companionId": {
                     "type": "string",
                     "description": "The ID of the companion"
                   }
                 },
-                "required": ["messages", "companionId"]
+                "required": ["message", "companionId"]
               }
             }
           }

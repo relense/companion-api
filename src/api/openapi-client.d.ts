@@ -327,7 +327,7 @@ declare namespace ClientApi {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      messages: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string; }[];
+      message: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string; };
       companionId: string;
     }
     namespace Responses {

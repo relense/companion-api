@@ -47,7 +47,7 @@ async function sendOpenaiMessages(params: {
 
 async function sendOpenaiMessagesAndSave(params: {
   context: SecurityContext<"CLIENT">;
-  messages: ClientApi.SendMessagesAndSave.RequestBody["messages"];
+  message: ClientApi.SendMessagesAndSave.RequestBody["message"];
   companionId: string;
 }) {
   const companionMessages = await messageService.getAllMessagesByCompanion({
@@ -56,31 +56,14 @@ async function sendOpenaiMessagesAndSave(params: {
     pagination: { page: 1, size: 25 },
   });
 
-  if (
-    companionMessages.items.length > 0 &&
-    companionMessages.items[companionMessages.items.length - 1].role ===
-      "assistant"
-  ) {
-    const message = await messageService.createMessage({
-      context: params.context,
-      content: params.messages[params.messages.length - 1].content,
-      role: params.messages[params.messages.length - 1].role,
-      companionId: params.companionId,
-    });
+  const savedMessage = await messageService.createMessage({
+    context: params.context,
+    content: params.message.content,
+    role: params.message.role,
+    companionId: params.companionId,
+  });
 
-    companionMessages.items.push(message);
-  } else {
-    for (const message of params.messages) {
-      const savedMessage = await messageService.createMessage({
-        context: params.context,
-        content: message.content,
-        role: message.role,
-        companionId: params.companionId,
-      });
-
-      companionMessages.items.push(savedMessage);
-    }
-  }
+  companionMessages.items.push(savedMessage);
 
   const messages: ChatCompletionMessageParam[] = [
     {
@@ -104,6 +87,26 @@ async function sendOpenaiMessagesAndSave(params: {
       name: "",
       hasOnBoarding: true,
     });
+
+    const trimData = response?.choices?.[0]?.message?.content
+      .replace("<ONBOARDING_COMPLETE>", "")
+      .trim();
+
+    await messageService.createMessage({
+      context: params.context,
+      content: trimData,
+      role: response?.choices?.[0]?.message?.role,
+      companionId: params.companionId,
+    });
+  } else {
+    if (response && response?.choices?.[0]?.message?.content) {
+      await messageService.createMessage({
+        context: params.context,
+        content: response?.choices?.[0]?.message?.content,
+        role: response?.choices?.[0]?.message?.role,
+        companionId: params.companionId,
+      });
+    }
   }
 
   return response;
@@ -139,30 +142,15 @@ async function sendMoreHistory(params: {
     pagination: { page: 1, size: 25 },
   });
 
-  if (
-    companionMessages.items.length > 0 &&
-    companionMessages.items[companionMessages.items.length - 1].role ===
-      "assistant"
-  ) {
-    const message = await messageService.createMessage({
+  if (params.messages[0].role == "user") {
+    const savedMessage = await messageService.createMessage({
       context: params.context,
-      content: params.messages[params.messages.length - 1].content,
-      role: params.messages[params.messages.length - 1].role,
+      content: params.messages[0].content,
+      role: params.messages[0].role,
       companionId: params.companionId,
     });
 
-    companionMessages.items.push(message);
-  } else {
-    for (const message of params.messages) {
-      const savedMessage = await messageService.createMessage({
-        context: params.context,
-        content: message.content,
-        role: message.role,
-        companionId: params.companionId,
-      });
-
-      companionMessages.items.push(savedMessage);
-    }
+    companionMessages.items.push(savedMessage);
   }
 
   const messages = [
@@ -177,6 +165,15 @@ async function sendMoreHistory(params: {
     model: "gpt-3.5-turbo",
     messages,
   });
+
+  if (response && response?.choices?.[0]?.message?.content) {
+    await messageService.createMessage({
+      context: params.context,
+      content: response?.choices?.[0]?.message?.content,
+      role: response?.choices?.[0]?.message?.role,
+      companionId: params.companionId,
+    });
+  }
 
   return response;
 }

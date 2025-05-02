@@ -267,7 +267,7 @@ router.post<ClientApi.SendMessagesAndSave.Config>(
       const response = await openaiServices.sendOpenaiMessagesAndSave({
         context: securityService.assertClientContext(req.context),
         companionId: req.body.companionId,
-        messages: req.body.messages,
+        message: req.body.message,
       });
 
       res.status(200).json(response);
@@ -286,12 +286,12 @@ router.post<ClientApi.CompleteAuthentication.Config>(
   "/auth/complete",
   async (req, res, next) => {
     try {
-      await userService.completeUserAuth({
+      const response = await userService.completeUserAuth({
         context: securityService.assertClientContext(req.context),
         messages: req.body.messages,
       });
 
-      res.status(200);
+      res.status(200).json(response);
     } catch (err) {
       next(err);
     }
