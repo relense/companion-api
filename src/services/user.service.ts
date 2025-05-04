@@ -29,20 +29,20 @@ async function completeUserAuth(params: {
     pagination: { page: 1, size: 3 },
   });
 
-  if (companions.items.length === 0) {
-    const response = await companionService.createCompanion({
-      context: params.context,
-      name: "Companion 1",
-      hasOnBoarding: true,
-    });
+  const messages = await messageService.getAllMessagesByCompanion({
+    context: params.context,
+    companionId: companions.items[0].companionId,
+    pagination: { page: 1, size: 1 },
+  });
 
+  if (messages.items.length === 0) {
     const createMessages = await messageService.insertBulkMessages({
       context: params.context,
-      companionId: response.companionId,
+      companionId: companions.items[0].companionId,
       messages: params.messages,
     });
 
-    if (!response || !createMessages) {
+    if (!createMessages) {
       throw Errors.messageNotCreated(JSON.stringify("Error"));
     }
   }

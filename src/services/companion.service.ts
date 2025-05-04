@@ -59,7 +59,23 @@ async function getAllCompanions(params: {
     .eq("userId", params.context.userId)
     .range(from, to);
 
-  if (!data) throw Errors.companionsNotFound();
+  if (!data || data.length === 0) {
+    const companion = await createCompanion({
+      context: params.context,
+      hasOnBoarding: false,
+      name: "Companion",
+    });
+
+    return {
+      items: [companion],
+      itemCount: 1,
+      pagination: params.pagination,
+    };
+  }
+
+  if (error) {
+    throw Errors.companionsNotFound();
+  }
 
   return {
     items: data

@@ -3,7 +3,6 @@ import { Message } from "../models/Message.js";
 import { Errors } from "../utils/errors.js";
 import { Pagination } from "../utils/paginationUtils.js";
 import { companionService } from "./companion.service.js";
-import { openaiServices } from "./openai.service.js";
 import { SecurityContext } from "./security.service.js";
 
 async function insertBulkMessages(params: {
