@@ -38,23 +38,22 @@ async function completeUserAuth(params: {
       name: "Companion",
     });
 
-    if (params.messages.length === 0) {
-      return companions.items[0];
-    }
+    if (params.messages.length > 0) {
+      const createMessages = await messageService.insertBulkMessages({
+        context: params.context,
+        companionId: companion.companionId,
+        messages: params.messages,
+      });
 
-    const createMessages = await messageService.insertBulkMessages({
-      context: params.context,
-      companionId: companion.companionId,
-      messages: params.messages,
-    });
-
-    if (!createMessages) {
-      throw Errors.messageNotCreated(JSON.stringify("Error"));
+      if (!createMessages) {
+        throw Errors.messageNotCreated(JSON.stringify("Error"));
+      }
     }
 
     if (
-      params.messages.length > 0 &&
-      params.messages[params.messages.length - 1].role === "user"
+      params.messages.length === 0 ||
+      (params.messages.length > 0 &&
+        params.messages[params.messages.length - 1].role === "user")
     ) {
       const response = await openaiServices.sendOpenaiMessages({
         context: params.context,
