@@ -52,6 +52,23 @@ async function completeUserAuth(params: {
       throw Errors.messageNotCreated(JSON.stringify("Error"));
     }
 
+    if (
+      params.messages.length > 0 &&
+      params.messages[params.messages.length - 1].role === "user"
+    ) {
+      const response = await openaiServices.sendOpenaiMessages({
+        context: params.context,
+        messages: params.messages as any,
+      });
+
+      messageService.createMessage({
+        context: params.context,
+        companionId: companion.companionId,
+        content: response.choices[0].message.content || "",
+        role: "assistant",
+      });
+    }
+
     return companion;
     // ELSE there is a companion. Does it have messages? If not, add all messages else do nothing.
   } else {
