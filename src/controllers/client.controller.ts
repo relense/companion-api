@@ -291,7 +291,8 @@ router.post<ClientApi.CompleteAuthentication.Config>(
         messages: req.body.messages,
       });
 
-      res.status(200).json(response);
+      // Garante que a resposta é sempre um objeto
+      res.status(200).json(response || {});
     } catch (err) {
       next(err);
     }
