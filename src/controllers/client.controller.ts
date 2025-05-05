@@ -10,6 +10,7 @@ import { buildPaginatedResponse } from "../utils/paginationUtils.js";
 import { companionService } from "../services/companion.service.js";
 import { openaiServices } from "../services/openai.service.js";
 import { userService } from "../services/user.service.js";
+import { emailCampaignService } from "../services/emailCampaign.service.js";
 
 const router = typedRouter(Router());
 
@@ -220,6 +221,24 @@ router.get<ClientApi.GetMessagesByCompanion.Config>(
           pagination: response.pagination,
         })
       );
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+//**
+// Post route: Create an email campaign
+//  */
+router.post<ClientApi.CreateEmailCampaign.Config>(
+  "/companions/:companionId/create-campaign",
+  async (req, res, next) => {
+    try {
+      const emailCampaign = await emailCampaignService.createEmailCampaign({
+        context: req.context,
+        companionId: req.params.companionId,
+      });
+      res.status(200).json(emailCampaign);
     } catch (err) {
       next(err);
     }

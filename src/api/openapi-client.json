@@ -919,6 +919,79 @@
         }
       }
     },
+    "/companions/{companionId}/create-campaign": {
+      "post": {
+        "summary": "Create and email campaign",
+        "operationId": "createEmailCampaign",
+        "parameters": [
+          {
+            "name": "companionId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "tags": ["openai"],
+        "responses": {
+          "200": {
+            "description": "A campaign was created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "emailCampaignId": { "type": "string" },
+                    "emailType": { "type": "boolean" },
+                    "companionId": { "type": "string" }
+                  },
+                  "required": ["id", "choices"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/gpt/messages": {
       "post": {
         "summary": "Send messages to OpenAI",
