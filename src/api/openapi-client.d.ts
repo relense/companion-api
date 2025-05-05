@@ -328,13 +328,11 @@ declare namespace ClientApi {
     export interface PathParameters {
       companionId: string;
     }
-    export interface RequestBody {
-    }
+    export type RequestBody = {};
     namespace Responses {
-      export interface $200 {
-        emailCampaignId?: string;
-        emailType?: boolean;
-        companionId?: string;
+      export interface $201 {
+        emailCampaignId: string;
+        companionId: string;
       }
       export interface $400 {
         message: string;
@@ -352,8 +350,8 @@ declare namespace ClientApi {
       queryParams: QueryParameters;
       requestBody: RequestBody;
       headers?: any;
-      responses: Responses.$200 | Responses.$400 | Responses.$500;
-      successResponses: Responses.$200;
+      responses: Responses.$201 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$201;
     }
   }
   namespace SendMessagesAndSave {

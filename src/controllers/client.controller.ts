@@ -235,10 +235,10 @@ router.post<ClientApi.CreateEmailCampaign.Config>(
   async (req, res, next) => {
     try {
       const emailCampaign = await emailCampaignService.createEmailCampaign({
-        context: req.context,
+        context: securityService.assertClientContext(req.context),
         companionId: req.params.companionId,
       });
-      res.status(200).json(emailCampaign);
+      res.status(201).json(emailCampaign);
     } catch (err) {
       next(err);
     }
