@@ -112,25 +112,6 @@ async function sendOpenaiMessagesAndSave(params: {
   return response;
 }
 
-async function generateEmail(params: {
-  context: SecurityContext<"CLIENT">;
-  messages: ClientApi.CreateEmail.RequestBody["messages"];
-}) {
-  const messages: ChatCompletionMessageParam[] = [
-    {
-      role: "system",
-      content: promptUtil.generateEmailPrompt(params.messages),
-    },
-  ];
-
-  const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages,
-  });
-
-  return response;
-}
-
 async function sendMoreHistory(params: {
   context: SecurityContext<"CLIENT">;
   messages: ClientApi.CreateMoreHistory.RequestBody["messages"];
@@ -182,7 +163,6 @@ const openaiServices = {
   getInitialMessage,
   sendOpenaiMessages,
   sendOpenaiMessagesAndSave,
-  generateEmail,
   sendMoreHistory,
 };
 

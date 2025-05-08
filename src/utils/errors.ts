@@ -12,9 +12,14 @@ const Errors = {
     new AppError(`Failed to create message: ${message}`, 500),
   companionNotCreated: (name: string) =>
     new AppError(`Failed to create companion: ${name}`, 500),
+  emailNotCreated: () => new AppError("Failed to created an email", 500),
   companionNotFound: (companionId: string) =>
     new AppError(`Companion with id ${companionId} not found`, 400),
   companionsNotFound: () => new AppError(`Companions not found`, 400),
+  emailCampaignNotFound: (emailCampaignId: string) =>
+    new AppError(`Email campaign with id ${emailCampaignId} not found`, 400),
+  emailCampaignsNotFound: () =>
+    new AppError(`Email campaigns where not found`, 400),
   unauthorized: () => new AppError("Unauthorized", 401),
   forbidden: () => new AppError("Forbidden", 403),
 };

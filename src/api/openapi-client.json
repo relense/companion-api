@@ -981,6 +981,215 @@
         }
       }
     },
+    "/companions/{companionId}/emailCampaigns": {
+      "get": {
+        "summary": "get all email campaigns",
+        "operationId": "getEmailCampaigns",
+        "parameters": [
+          {
+            "name": "companionId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "tags": ["emailCampaign"],
+        "responses": {
+          "200": {
+            "description": "All campaigns fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "emailCampaignId": { "type": "string" },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-01T08:00:00Z"
+                      },
+                      "companionId": { "type": "string" }
+                    },
+                    "required": ["emailCampaignId", "companionId"]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emailCampaigns/{emailCampaignId}": {
+      "get": {
+        "summary": "get an email campaign information",
+        "operationId": "getEmailCampaign",
+        "parameters": [
+          {
+            "name": "emailCampaignId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "tags": ["emailCampaign"],
+        "responses": {
+          "200": {
+            "description": "A campaign was fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "emailCampaignId": { "type": "string" },
+                    "companionId": { "type": "string" },
+                    "emails": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "emailId": { "type": "string" },
+                          "content": { "type": "string" },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2021-01-01T08:00:00Z"
+                          }
+                        },
+                        "required": ["emailId", "content", "createdAt"]
+                      }
+                    }
+                  },
+                  "required": ["emailCampaignId", "companionId"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emailCampaigns/{emailCampaignId}/create-email": {
+      "post": {
+        "summary": "Create and email",
+        "operationId": "createEmail",
+        "parameters": [
+          {
+            "name": "emailCampaignId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "tags": ["email"],
+        "responses": {
+          "201": {
+            "description": "An email was created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "emailId": { "type": "string" },
+                    "content": { "type": "string" },
+                    "companionId": { "type": "string" }
+                  },
+                  "required": ["emailId", "content", "companionId"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/gpt/messages": {
       "post": {
         "summary": "Send messages to OpenAI",
@@ -1050,100 +1259,6 @@
                     }
                   },
                   "required": ["id", "choices"]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string" }
-                  },
-                  "required": ["message"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/gpt/email": {
-      "post": {
-        "summary": "Create and email with OpenAi",
-        "operationId": "createEmail",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "messages": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "role": { "type": "string" },
-                        "content": { "type": "string" }
-                      },
-                      "required": ["role", "content"]
-                    }
-                  }
-                },
-                "required": ["messages"]
-              }
-            }
-          }
-        },
-        "tags": ["openai"],
-        "responses": {
-          "200": {
-            "description": "OpenAI responded successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "string" },
-                    "choices": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "message": {
-                            "type": "object",
-                            "properties": {
-                              "role": { "type": "string" },
-                              "content": { "type": "string", "nullable": true }
-                            },
-                            "required": ["role", "content"]
-                          }
-                        },
-                        "required": ["message"]
-                      }
-                    }
-                  },
-                  "required": ["id", "choices"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["message"]
                 }
               }
             }

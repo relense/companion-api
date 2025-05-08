@@ -11,6 +11,7 @@ import { companionService } from "../services/companion.service.js";
 import { openaiServices } from "../services/openai.service.js";
 import { userService } from "../services/user.service.js";
 import { emailCampaignService } from "../services/emailCampaign.service.js";
+import { emailService } from "../services/email.service.js";
 
 const router = typedRouter(Router());
 
@@ -238,6 +239,7 @@ router.post<ClientApi.CreateEmailCampaign.Config>(
         context: securityService.assertClientContext(req.context),
         companionId: req.params.companionId,
       });
+
       res.status(201).json(emailCampaign);
     } catch (err) {
       next(err);
@@ -245,23 +247,58 @@ router.post<ClientApi.CreateEmailCampaign.Config>(
   }
 );
 
-// OPEN AI CLIENT ENDPOINTS
-router.post<ClientApi.CreateEmail.Config>(
-  "/gpt/email",
+router.get<ClientApi.GetEmailCampaign.Config>(
+  "/emailCampaigns/:emailCampaignId",
   async (req, res, next) => {
     try {
-      const response = await openaiServices.generateEmail({
+      const emailCampaign = await emailCampaignService.getEmailCampaign({
         context: securityService.assertClientContext(req.context),
-        messages: req.body.messages,
+        emailCampaignId: req.params.emailCampaignId,
       });
 
-      res.status(200).json(response);
+      res.status(200).json({
+        emailCampaignId: "",
+        companionId: "",
+      });
     } catch (err) {
       next(err);
     }
   }
 );
 
+router.get<ClientApi.GetEmailCampaigns.Config>(
+  "/companions/:companionId/emailCampaigns",
+  async (req, res, next) => {
+    try {
+      const emailCampaigns = await emailCampaignService.getAllEmailCampaign({
+        context: securityService.assertClientContext(req.context),
+        companionId: req.params.companionId,
+      });
+
+      res.status(200).json(emailCampaigns);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post<ClientApi.CreateEmail.Config>(
+  "/emailCampaigns/:emailCampaignId/create-email",
+  async (req, res, next) => {
+    try {
+      const email = await emailService.createEmail({
+        context: securityService.assertClientContext(req.context),
+        emailCampaignId: req.params.emailCampaignId,
+      });
+
+      res.status(201).json(email);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// OPEN AI CLIENT ENDPOINTS
 router.post<ClientApi.CreateMoreHistory.Config>(
   "/gpt/history",
   async (req, res, next) => {

@@ -354,6 +354,99 @@ declare namespace ClientApi {
       successResponses: Responses.$201;
     }
   }
+  namespace GetEmailCampaigns {
+    export type QueryParameters = {};
+    export interface PathParameters {
+      companionId: string;
+    }
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $200 {
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "getEmailCampaigns";
+      method: "get";
+      expressPath: "/companions/:companionId/emailCampaigns";
+      openapiPath: "/companions/{companionId}/emailCampaigns";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace GetEmailCampaign {
+    export type QueryParameters = {};
+    export interface PathParameters {
+      emailCampaignId: string;
+    }
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $200 {
+        emailCampaignId: string;
+        companionId: string;
+        emails?: { emailId: string; content: string; createdAt: string; }[];
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "getEmailCampaign";
+      method: "get";
+      expressPath: "/emailCampaigns/:emailCampaignId";
+      openapiPath: "/emailCampaigns/{emailCampaignId}";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace CreateEmail {
+    export type QueryParameters = {};
+    export interface PathParameters {
+      emailCampaignId: string;
+    }
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $201 {
+        emailId: string;
+        content: string;
+        companionId: string;
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "createEmail";
+      method: "post";
+      expressPath: "/emailCampaigns/:emailCampaignId/create-email";
+      openapiPath: "/emailCampaigns/{emailCampaignId}/create-email";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$201 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$201;
+    }
+  }
   namespace SendMessagesAndSave {
     export type QueryParameters = {};
     export type PathParameters = {};
@@ -380,37 +473,6 @@ declare namespace ClientApi {
       requestBody: RequestBody;
       headers?: any;
       responses: Responses.$200 | Responses.$500;
-      successResponses: Responses.$200;
-    }
-  }
-  namespace CreateEmail {
-    export type QueryParameters = {};
-    export type PathParameters = {};
-    export interface RequestBody {
-      messages: { role: string; content: string; }[];
-    }
-    namespace Responses {
-      export interface $200 {
-        id: string;
-        choices: { message: { role: string; content: string | null; }; }[];
-      }
-      export interface $400 {
-        message: string;
-      }
-      export interface $500 {
-        message: string;
-      }
-    }
-    export interface Config {
-      operationId: "createEmail";
-      method: "post";
-      expressPath: "/gpt/email";
-      openapiPath: "/gpt/email";
-      pathParams: PathParameters;
-      queryParams: QueryParameters;
-      requestBody: RequestBody;
-      headers?: any;
-      responses: Responses.$200 | Responses.$400 | Responses.$500;
       successResponses: Responses.$200;
     }
   }
