@@ -362,6 +362,8 @@ declare namespace ClientApi {
     export type RequestBody = {};
     namespace Responses {
       export interface $200 {
+        items: { emailCampaignId: string; isIndividual?: boolean | null; createdAt: string; updatedAt: string; companionId: string; }[];
+        itemCount: integer;
       }
       export interface $400 {
         message: string;

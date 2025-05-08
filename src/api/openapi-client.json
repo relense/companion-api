@@ -983,7 +983,7 @@
     },
     "/companions/{companionId}/emailCampaigns": {
       "get": {
-        "summary": "get all email campaigns",
+        "summary": "Get all email campaigns",
         "operationId": "getEmailCampaigns",
         "parameters": [
           {
@@ -1000,20 +1000,44 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "emailCampaignId": { "type": "string" },
-                      "createdAt": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2021-01-01T08:00:00Z"
-                      },
-                      "companionId": { "type": "string" }
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "emailCampaignId": { "type": "string" },
+                          "isIndividual": {
+                            "type": "boolean",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2021-01-01T08:00:00Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2021-01-01T09:00:00Z"
+                          },
+                          "companionId": { "type": "string" }
+                        },
+                        "required": [
+                          "emailCampaignId",
+                          "createdAt",
+                          "updatedAt",
+                          "companionId"
+                        ]
+                      }
                     },
-                    "required": ["emailCampaignId", "companionId"]
-                  }
+                    "itemCount": {
+                      "type": "integer",
+                      "example": 5
+                    }
+                  },
+                  "required": ["items", "itemCount"]
                 }
               }
             }
