@@ -34,7 +34,7 @@ async function getEmailCampaign(params: {
     .from("EmailCampaign")
     .select("*")
     .eq("emailCampaignId", params.emailCampaignId)
-    .maybeSingle();
+    .single();
 
   if (!data || error) {
     throw Errors.emailCampaignNotFound(params.emailCampaignId);

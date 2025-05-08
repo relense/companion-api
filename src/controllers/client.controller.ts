@@ -256,10 +256,7 @@ router.get<ClientApi.GetEmailCampaign.Config>(
         emailCampaignId: req.params.emailCampaignId,
       });
 
-      res.status(200).json({
-        emailCampaignId: "",
-        companionId: "",
-      });
+      res.status(200).json(emailCampaign);
     } catch (err) {
       next(err);
     }
