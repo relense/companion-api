@@ -1096,6 +1096,7 @@
                   "properties": {
                     "emailCampaignId": { "type": "string" },
                     "companionId": { "type": "string" },
+                    "isIndividual": { "type": "boolean", "nullable": true },
                     "emails": {
                       "type": "array",
                       "items": {

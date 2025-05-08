@@ -395,6 +395,7 @@ declare namespace ClientApi {
       export interface $200 {
         emailCampaignId: string;
         companionId: string;
+        isIndividual?: boolean | null;
         emails?: { emailId: string; content: string; createdAt: string; }[];
       }
       export interface $400 {
