@@ -72,6 +72,18 @@ async function getAllCompanions(params: {
   };
 }
 
+async function countCompanions(params: { context: SecurityContext<"CLIENT"> }) {
+  const { count, error } = await supabase
+    .from("EmailCampaign")
+    .select("*", { count: "exact", head: true });
+
+  if (error) {
+    throw Errors.companionsNotFound;
+  }
+
+  return count;
+}
+
 async function updateCompanion(params: {
   context: SecurityContext<"CLIENT">;
   companionId: string;
@@ -114,6 +126,7 @@ const companionService = {
   getAllCompanions,
   updateCompanion,
   deleteCompanion,
+  countCompanions,
 };
 
 export { companionService };

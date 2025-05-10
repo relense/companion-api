@@ -1022,10 +1022,13 @@
                             "format": "date-time",
                             "example": "2021-01-01T09:00:00Z"
                           },
-                          "companionId": { "type": "string" }
+                          "companionId": { "type": "string" },
+                          "name": { "type": "string", "nullable": true }
                         },
                         "required": [
                           "emailCampaignId",
+                          "name",
+                          "isIndividual",
                           "createdAt",
                           "updatedAt",
                           "companionId"
@@ -1097,6 +1100,12 @@
                     "emailCampaignId": { "type": "string" },
                     "companionId": { "type": "string" },
                     "isIndividual": { "type": "boolean", "nullable": true },
+                    "name": { "type": "string", "nullable": true },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2021-01-01T08:00:00Z"
+                    },
                     "emails": {
                       "type": "array",
                       "items": {
@@ -1114,7 +1123,121 @@
                       }
                     }
                   },
-                  "required": ["emailCampaignId", "companionId"]
+                  "required": [
+                    "emailCampaignId",
+                    "name",
+                    "companionId",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update an email campaign",
+        "operationId": "updateEmailCampaign",
+        "parameters": [
+          {
+            "name": "emailCampaignId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "isIndividual": {
+                    "type": "boolean",
+                    "description": "If a campaign is for one or more people"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Email campaign name"
+                  }
+                },
+                "required": ["isIndividual", "name"]
+              }
+            }
+          }
+        },
+        "tags": ["emailCampaign"],
+        "responses": {
+          "200": {
+            "description": "A campaign was fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "emailCampaignId": { "type": "string" },
+                    "companionId": { "type": "string" },
+                    "isIndividual": { "type": "boolean", "nullable": true },
+                    "name": { "type": "string", "nullable": true },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2021-01-01T08:00:00Z"
+                    },
+                    "emails": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "emailId": { "type": "string" },
+                          "content": { "type": "string" },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2021-01-01T08:00:00Z"
+                          }
+                        },
+                        "required": ["emailId", "content", "createdAt"]
+                      }
+                    }
+                  },
+                  "required": [
+                    "emailCampaignId",
+                    "name",
+                    "companionId",
+                    "createdAt"
+                  ]
                 }
               }
             }

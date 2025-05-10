@@ -362,7 +362,7 @@ declare namespace ClientApi {
     export type RequestBody = {};
     namespace Responses {
       export interface $200 {
-        items: { emailCampaignId: string; isIndividual?: boolean | null; createdAt: string; updatedAt: string; companionId: string; }[];
+        items: { emailCampaignId: string; isIndividual: boolean | null; createdAt: string; updatedAt: string; companionId: string; name: string | null; }[];
         itemCount: integer;
       }
       export interface $400 {
@@ -396,6 +396,8 @@ declare namespace ClientApi {
         emailCampaignId: string;
         companionId: string;
         isIndividual?: boolean | null;
+        name: string | null;
+        createdAt: string;
         emails?: { emailId: string; content: string; createdAt: string; }[];
       }
       export interface $400 {
@@ -408,6 +410,44 @@ declare namespace ClientApi {
     export interface Config {
       operationId: "getEmailCampaign";
       method: "get";
+      expressPath: "/emailCampaigns/:emailCampaignId";
+      openapiPath: "/emailCampaigns/{emailCampaignId}";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace UpdateEmailCampaign {
+    export type QueryParameters = {};
+    export interface PathParameters {
+      emailCampaignId: string;
+    }
+    export interface RequestBody {
+      isIndividual: boolean;
+      name: string;
+    }
+    namespace Responses {
+      export interface $200 {
+        emailCampaignId: string;
+        companionId: string;
+        isIndividual?: boolean | null;
+        name: string | null;
+        createdAt: string;
+        emails?: { emailId: string; content: string; createdAt: string; }[];
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "updateEmailCampaign";
+      method: "patch";
       expressPath: "/emailCampaigns/:emailCampaignId";
       openapiPath: "/emailCampaigns/{emailCampaignId}";
       pathParams: PathParameters;

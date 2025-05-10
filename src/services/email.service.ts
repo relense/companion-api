@@ -6,7 +6,6 @@ import promptUtil from "../prompts/outreacthCompanion.js";
 import { emailCampaignService } from "./emailCampaign.service.js";
 import { messageService } from "./message.service.js";
 import { supabase } from "../lib/supabaseClient.js";
-import { Email } from "../models/Email.js";
 import { Errors } from "../utils/errors.js";
 
 const openai = new OpenAI({
@@ -45,7 +44,6 @@ async function createEmail(params: {
     .insert({
       emailCampaignId: params.emailCampaignId,
       content: response.choices[0].message.content,
-      companionId: emailCampaign.companionId,
     })
     .select()
     .single();
@@ -61,8 +59,25 @@ async function createEmail(params: {
   };
 }
 
+async function countAllEmailsByCampaignId(params: {
+  context: SecurityContext<"CLIENT">;
+  emailCampaignId: ClientApi.CreateEmail.PathParameters["emailCampaignId"];
+}) {
+  const { count, error } = await supabase
+    .from("Emails")
+    .select("*", { count: "exact", head: true })
+    .eq("emailCampaignId", params.emailCampaignId);
+
+  if (error) {
+    throw Errors.companionsNotFound;
+  }
+
+  return count;
+}
+
 const emailService = {
   createEmail,
+  countAllEmailsByCampaignId,
 };
 
 export { emailService };

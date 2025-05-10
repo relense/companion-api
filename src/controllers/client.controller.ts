@@ -263,6 +263,24 @@ router.get<ClientApi.GetEmailCampaign.Config>(
   }
 );
 
+router.patch<ClientApi.UpdateEmailCampaign.Config>(
+  "/emailCampaigns/:emailCampaignId",
+  async (req, res, next) => {
+    try {
+      const emailCampaign = await emailCampaignService.updateEmailCampaign({
+        context: securityService.assertClientContext(req.context),
+        emailCampaignId: req.params.emailCampaignId,
+        isIndividual: req.body.isIndividual,
+        name: req.body.name,
+      });
+
+      res.status(200).json(emailCampaign);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.get<ClientApi.GetEmailCampaigns.Config>(
   "/companions/:companionId/emailCampaigns",
   async (req, res, next) => {

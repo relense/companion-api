@@ -2,6 +2,7 @@ import { supabase } from "../lib/supabaseClient.js";
 import { EmailCampaign } from "../models/EmailCampaign.js";
 import { Errors } from "../utils/errors.js";
 import { companionService } from "./companion.service.js";
+import { emailService } from "./email.service.js";
 import { SecurityContext } from "./security.service.js";
 
 async function createEmailCampaign(params: {
@@ -13,10 +14,17 @@ async function createEmailCampaign(params: {
     companionId: params.companionId,
   });
 
+  const companions = await companionService.countCompanions({
+    context: params.context,
+  });
+
   if (companion) {
     const { data, error } = await supabase
       .from("EmailCampaign")
-      .insert({ companionId: params.companionId })
+      .insert({
+        name: `Campaign ${companions ? companions + 1 : "1"}`,
+        companionId: params.companionId,
+      })
       .select()
       .single();
 
@@ -30,7 +38,7 @@ async function getEmailCampaign(params: {
   context: SecurityContext<"CLIENT">;
   emailCampaignId: string;
 }) {
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from("EmailCampaign")
     .select("*")
     .eq("emailCampaignId", params.emailCampaignId)
@@ -40,7 +48,27 @@ async function getEmailCampaign(params: {
     throw Errors.emailCampaignNotFound(params.emailCampaignId);
   }
 
-  return EmailCampaign.fromRow(data);
+  const { data: emails, error: emailError } = await supabase
+    .from("Email")
+    .select("emailId, content, createdAt")
+    .eq("emailCampaignId", params.emailCampaignId);
+
+  if (!emails || emailError) {
+    throw Errors.emailCampaignNotFound(params.emailCampaignId);
+  }
+
+  return {
+    emailCampaignId: data.emailCampaignId,
+    companionId: data.companionId,
+    isIndividual: data.isIndividual ?? null,
+    name: data.name ?? null,
+    createdAt: data.createdAt,
+    emails: emails.map((email) => ({
+      emailId: email.emailId,
+      content: email.content,
+      createdAt: email.createdAt,
+    })),
+  };
 }
 
 async function getAllEmailCampaign(params: {
@@ -64,10 +92,50 @@ async function getAllEmailCampaign(params: {
   };
 }
 
+async function updateEmailCampaign(params: {
+  context: SecurityContext<"CLIENT">;
+  name?: string;
+  isIndividual?: boolean;
+  emailCampaignId: string;
+}) {
+  const updates: any = {};
+
+  if (params.name !== undefined && params.name !== null)
+    updates.name = params.name;
+  if (params.isIndividual !== undefined && params.isIndividual !== null)
+    updates.isIndividual = params.isIndividual;
+
+  let { data, error } = await supabase
+    .from("EmailCampaign")
+    .update(updates)
+    .eq("emailCampaignId", params.emailCampaignId)
+    .select()
+    .single();
+
+  if (!data || error) {
+    throw Errors.emailCampaignNotFound(params.emailCampaignId);
+  }
+
+  const emailCount = await emailService.countAllEmailsByCampaignId({
+    context: params.context,
+    emailCampaignId: params.emailCampaignId,
+  });
+
+  if (emailCount === null) {
+    emailService.createEmail({
+      context: params.context,
+      emailCampaignId: params.emailCampaignId,
+    });
+  }
+
+  return EmailCampaign.fromRow(data).toResource();
+}
+
 const emailCampaignService = {
   createEmailCampaign,
   getEmailCampaign,
   getAllEmailCampaign,
+  updateEmailCampaign,
 };
 
 export { emailCampaignService };
