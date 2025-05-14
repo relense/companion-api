@@ -490,6 +490,46 @@ declare namespace ClientApi {
       successResponses: Responses.$201;
     }
   }
+  namespace GetEmailCampaignProfiler {
+    export type QueryParameters = {};
+    export interface PathParameters {
+      emailCampaignId: string;
+    }
+    export type RequestBody = {};
+    namespace Responses {
+      export interface $200 {
+        profilerId: string;
+        email: string;
+        location: string;
+        name: string;
+        companyUrl: string;
+        socialMediaUrl: string[];
+        otherSourcesUrl: string[];
+        createdAt: string;
+        updatedAt: string;
+        companionId: string;
+        emailCampaignId: string;
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "getEmailCampaignProfiler";
+      method: "get";
+      expressPath: "/emailCampaigns/:emailCampaignId/profiler";
+      openapiPath: "/emailCampaigns/{emailCampaignId}/profiler";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
   namespace SendMessagesAndSave {
     export type QueryParameters = {};
     export type PathParameters = {};

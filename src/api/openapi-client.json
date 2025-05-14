@@ -1088,7 +1088,7 @@
             "schema": { "type": "string" }
           }
         ],
-        "tags": ["emailCampaign"],
+        "tags": ["emailCampaigns"],
         "responses": {
           "200": {
             "description": "A campaign was fetched successfully",
@@ -1230,7 +1230,7 @@
             }
           }
         },
-        "tags": ["emailCampaign"],
+        "tags": ["emailCampaigns"],
         "responses": {
           "200": {
             "description": "A campaign was fetched successfully",
@@ -1320,7 +1320,7 @@
             "schema": { "type": "string" }
           }
         ],
-        "tags": ["email"],
+        "tags": ["emailcampaigns"],
         "responses": {
           "201": {
             "description": "An email was created successfully",
@@ -1348,6 +1348,101 @@
                     "message": {
                       "type": "string"
                     }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emailCampaigns/{emailCampaignId}/profiler": {
+      "get": {
+        "summary": "Get a profiler related to the email campaign",
+        "operationId": "getEmailCampaignProfiler",
+        "parameters": [
+          {
+            "name": "emailCampaignId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "tags": ["emailCampaigns"],
+        "responses": {
+          "200": {
+            "description": "A campaign profiler was fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "profilerId": { "type": "string" },
+                    "email": { "type": "string" },
+                    "location": { "type": "string" },
+                    "name": { "type": "string" },
+                    "companyUrl": { "type": "string" },
+                    "socialMediaUrl": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "otherSourcesUrl": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2021-01-01T09:00:00Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2021-01-01T09:00:00Z"
+                    },
+                    "companionId": { "type": "string" },
+                    "emailCampaignId": { "type": "string" }
+                  },
+                  "required": [
+                    "profilerId",
+                    "email",
+                    "location",
+                    "name",
+                    "companyUrl",
+                    "socialMediaUrl",
+                    "otherSourcesUrl",
+                    "createdAt",
+                    "updatedAt",
+                    "companionId",
+                    "emailCampaignId"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
                   },
                   "required": ["message"]
                 }

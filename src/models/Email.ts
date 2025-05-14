@@ -6,10 +6,13 @@ type EmailRow = {
   followup: boolean;
   wasRefreshed: boolean;
   wasCopied: boolean;
+  wasSent: boolean;
+  wasReplied: boolean;
   numberOfReplies: number;
   sentiment: number;
   firstReply: string;
   lastReply: string;
+  callScheduled: boolean;
   notes: string;
   createdAt: string;
   updatedAt: string;
@@ -25,10 +28,13 @@ export class Email {
     public readonly followup: boolean,
     public readonly wasRefreshed: boolean,
     public readonly wasCopied: boolean,
+    public readonly wasSent: boolean,
+    public readonly wasReplied: boolean,
     public readonly numberOfReplies: number,
     public readonly sentiment: number,
     public readonly firstReply: string,
     public readonly lastReply: string,
+    public readonly callScheduled: boolean,
     public readonly notes: string,
     public readonly createdAt: string,
     public readonly updatedAt: string,
@@ -44,10 +50,13 @@ export class Email {
       followup: this.followup,
       wasRefreshed: this.wasRefreshed,
       wasCopied: this.wasCopied,
+      wasSent: this.wasSent,
+      wasReplied: this.wasReplied,
       numberOfReplies: this.numberOfReplies,
       sentiment: this.sentiment,
       firstReply: this.firstReply,
       lastReply: this.lastReply,
+      callScheduled: this.callScheduled,
       notes: this.notes,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
@@ -64,10 +73,13 @@ export class Email {
       row.followup,
       row.wasRefreshed,
       row.wasCopied,
+      row.wasSent,
+      row.wasReplied,
       row.numberOfReplies,
       row.sentiment,
       row.firstReply,
       row.lastReply,
+      row.callScheduled,
       row.notes,
       row.createdAt,
       row.updatedAt,

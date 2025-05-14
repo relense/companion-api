@@ -7,6 +7,7 @@ type MessageRow = {
   createdAt: string;
   updatedAt: string;
   companionId: string;
+  profilerId?: string | null;
 };
 
 export class Message {
@@ -16,7 +17,8 @@ export class Message {
     public readonly content: string,
     public readonly createdAt: string,
     public readonly updatedAt: string,
-    public readonly companionId: string
+    public readonly companionId: string,
+    public readonly profilerId?: string | null
   ) {}
 
   toResource() {
@@ -27,6 +29,7 @@ export class Message {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       companionId: this.companionId,
+      profilerId: this.profilerId,
     };
   }
 
@@ -37,7 +40,8 @@ export class Message {
       row.content,
       row.createdAt,
       row.updatedAt,
-      row.companionId
+      row.companionId,
+      row.profilerId ?? null
     );
   }
 }
