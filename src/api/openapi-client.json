@@ -1118,6 +1118,8 @@
                           "followup": { "type": "boolean" },
                           "wasRefreshed": { "type": "boolean" },
                           "wasCopied": { "type": "boolean" },
+                          "wasSent": { "type": "boolean" },
+                          "wasReplied": { "type": "boolean" },
                           "numberOfReplies": { "type": "integer" },
                           "sentiment": {
                             "type": "integer",
@@ -1126,6 +1128,10 @@
                           },
                           "firstReply": { "type": "string", "nullable": true },
                           "lastReply": { "type": "string", "nullable": true },
+                          "callScheduled": {
+                            "type": "string",
+                            "nullable": true
+                          },
                           "notes": { "type": "string", "nullable": true },
                           "createdAt": {
                             "type": "string",
@@ -1135,7 +1141,8 @@
                             "type": "string",
                             "format": "date-time"
                           },
-                          "emailCampaignId": { "type": "string" }
+                          "emailCampaignId": { "type": "string" },
+                          "profilerId": { "type": "string", "nullable": true }
                         },
                         "required": [
                           "emailId",
@@ -1145,14 +1152,18 @@
                           "followup",
                           "wasRefreshed",
                           "wasCopied",
+                          "wasSent",
+                          "wasReplied",
                           "numberOfReplies",
                           "sentiment",
                           "firstReply",
                           "lastReply",
+                          "callScheduled",
                           "notes",
                           "createdAt",
                           "updatedAt",
-                          "emailCampaignId"
+                          "emailCampaignId",
+                          "profilerId"
                         ]
                       }
                     }
@@ -1255,21 +1266,67 @@
                         "properties": {
                           "emailId": { "type": "string" },
                           "content": { "type": "string" },
+                          "like": { "type": "boolean" },
+                          "dislike": { "type": "boolean" },
+                          "followup": { "type": "boolean" },
+                          "wasRefreshed": { "type": "boolean" },
+                          "wasCopied": { "type": "boolean" },
+                          "wasSent": { "type": "boolean" },
+                          "wasReplied": { "type": "boolean" },
+                          "numberOfReplies": { "type": "integer" },
+                          "sentiment": {
+                            "type": "integer",
+                            "enum": [-1, 0, 1],
+                            "description": "-1 = Negative, 0 = Neutral, 1 = Positive"
+                          },
+                          "firstReply": { "type": "string", "nullable": true },
+                          "lastReply": { "type": "string", "nullable": true },
+                          "callScheduled": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "notes": { "type": "string", "nullable": true },
                           "createdAt": {
                             "type": "string",
-                            "format": "date-time",
-                            "example": "2021-01-01T08:00:00Z"
-                          }
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "emailCampaignId": { "type": "string" },
+                          "profilerId": { "type": "string", "nullable": true }
                         },
-                        "required": ["emailId", "content", "createdAt"]
+                        "required": [
+                          "emailId",
+                          "content",
+                          "like",
+                          "dislike",
+                          "followup",
+                          "wasRefreshed",
+                          "wasCopied",
+                          "wasSent",
+                          "wasReplied",
+                          "numberOfReplies",
+                          "sentiment",
+                          "firstReply",
+                          "lastReply",
+                          "callScheduled",
+                          "notes",
+                          "createdAt",
+                          "updatedAt",
+                          "emailCampaignId",
+                          "profilerId"
+                        ]
                       }
                     }
                   },
                   "required": [
                     "emailCampaignId",
-                    "name",
                     "companionId",
-                    "createdAt"
+                    "name",
+                    "createdAt",
+                    "emails"
                   ]
                 }
               }
@@ -1310,7 +1367,7 @@
     },
     "/emailCampaigns/{emailCampaignId}/create-email": {
       "post": {
-        "summary": "Create and email",
+        "summary": "Create an email",
         "operationId": "createEmail",
         "parameters": [
           {
@@ -1331,9 +1388,55 @@
                   "properties": {
                     "emailId": { "type": "string" },
                     "content": { "type": "string" },
-                    "companionId": { "type": "string" }
+                    "like": { "type": "boolean" },
+                    "dislike": { "type": "boolean" },
+                    "followup": { "type": "boolean" },
+                    "wasRefreshed": { "type": "boolean" },
+                    "wasCopied": { "type": "boolean" },
+                    "wasSent": { "type": "boolean" },
+                    "wasReplied": { "type": "boolean" },
+                    "numberOfReplies": { "type": "integer" },
+                    "sentiment": {
+                      "type": "integer",
+                      "enum": [-1, 0, 1],
+                      "description": "-1 = Negative, 0 = Neutral, 1 = Positive"
+                    },
+                    "firstReply": { "type": "string" },
+                    "lastReply": { "type": "string" },
+                    "callScheduled": { "type": "string" },
+                    "notes": { "type": "string" },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "emailCampaignId": { "type": "string" },
+                    "profilerId": { "type": "string", "nullable": true }
                   },
-                  "required": ["emailId", "content", "companionId"]
+                  "required": [
+                    "emailId",
+                    "content",
+                    "like",
+                    "dislike",
+                    "followup",
+                    "wasRefreshed",
+                    "wasCopied",
+                    "wasSent",
+                    "wasReplied",
+                    "numberOfReplies",
+                    "sentiment",
+                    "firstReply",
+                    "lastReply",
+                    "callScheduled",
+                    "notes",
+                    "createdAt",
+                    "updatedAt",
+                    "emailCampaignId",
+                    "profilerId"
+                  ]
                 }
               }
             }
@@ -1345,9 +1448,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {
-                      "type": "string"
-                    }
+                    "message": { "type": "string" }
                   },
                   "required": ["message"]
                 }

@@ -6,17 +6,18 @@ type EmailRow = {
   followup: boolean;
   wasRefreshed: boolean;
   wasCopied: boolean;
-  wasSent: boolean;
-  wasReplied: boolean;
   numberOfReplies: number;
   sentiment: number;
   firstReply: string;
   lastReply: string;
-  callScheduled: boolean;
   notes: string;
   createdAt: string;
   updatedAt: string;
   emailCampaignId: string;
+  wasSent: boolean;
+  wasReplied: boolean;
+  callScheduled: string;
+  profilerId?: string | null;
 };
 
 export class Email {
@@ -34,11 +35,12 @@ export class Email {
     public readonly sentiment: number,
     public readonly firstReply: string,
     public readonly lastReply: string,
-    public readonly callScheduled: boolean,
+    public readonly callScheduled: string,
     public readonly notes: string,
     public readonly createdAt: string,
     public readonly updatedAt: string,
-    public readonly emailCampaignId: string
+    public readonly emailCampaignId: string,
+    public readonly profilerId?: string | null
   ) {}
 
   toResource() {
@@ -61,6 +63,7 @@ export class Email {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       emailCampaignId: this.emailCampaignId,
+      profilerId: this.profilerId,
     };
   }
 
@@ -83,7 +86,8 @@ export class Email {
       row.notes,
       row.createdAt,
       row.updatedAt,
-      row.emailCampaignId
+      row.emailCampaignId,
+      row.profilerId
     );
   }
 }

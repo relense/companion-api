@@ -42,6 +42,14 @@ async function createEmail(params: {
     messages,
   });
 
+  // if (emailCampaign.isIndividual) {
+  //   const { data, error } = await supabase
+  //     .from("Profiler")
+  //     .insert({})
+  //     .select()
+  //     .single();
+  // }
+
   const { data, error } = await supabase
     .from("Email")
     .insert({
@@ -52,6 +60,7 @@ async function createEmail(params: {
     .single();
 
   if (!data || error) {
+    console.log(error);
     throw Errors.emailNotCreated();
   }
 
@@ -59,6 +68,23 @@ async function createEmail(params: {
     companionId: emailCampaign.companionId,
     content: data.content,
     emailId: data.emailId,
+    like: data.like,
+    dislike: data.dislike,
+    followup: data.followup,
+    wasRefreshed: data.wasRefreshed,
+    wasCopied: data.wasCopied,
+    wasSent: data.wasSent,
+    wasReplied: data.wasReplied,
+    numberOfReplies: data.numberOfReplies,
+    sentiment: data.sentiment,
+    firstReply: data.firstReply,
+    lastReply: data.lastReply,
+    callScheduled: data.callScheduled,
+    notes: data.notes,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    emailCampaignId: data.emailCampaignId,
+    profilerId: data.profilerId ?? null,
   };
 }
 

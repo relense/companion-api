@@ -72,14 +72,18 @@ async function getEmailCampaign(params: {
       followup: e.followup,
       wasRefreshed: e.wasRefreshed,
       wasCopied: e.wasCopied,
+      wasSent: e.wasSent,
+      wasReplied: e.wasReplied,
       numberOfReplies: e.numberOfReplies,
       sentiment: e.sentiment,
       firstReply: e.firstReply,
       lastReply: e.lastReply,
+      callScheduled: e.callScheduled,
       notes: e.notes,
       createdAt: e.createdAt,
       updatedAt: e.updatedAt,
       emailCampaignId: e.emailCampaignId,
+      profilerId: e.profilerId ?? null,
     })),
   };
 }
@@ -111,14 +115,17 @@ async function updateEmailCampaign(params: {
   isIndividual?: boolean;
   emailCampaignId: string;
 }) {
-  const updates: any = {};
+  const updates: Partial<{ name: string; isIndividual: boolean }> = {};
 
-  if (params.name !== undefined && params.name !== null)
+  if (params.name !== undefined) {
     updates.name = params.name;
-  if (params.isIndividual !== undefined && params.isIndividual !== null)
-    updates.isIndividual = params.isIndividual;
+  }
 
-  let { data, error } = await supabase
+  if (params.isIndividual !== undefined) {
+    updates.isIndividual = params.isIndividual;
+  }
+
+  const { data, error } = await supabase
     .from("EmailCampaign")
     .update(updates)
     .eq("emailCampaignId", params.emailCampaignId)
@@ -129,19 +136,59 @@ async function updateEmailCampaign(params: {
     throw Errors.emailCampaignNotFound(params.emailCampaignId);
   }
 
-  const emailCount = await emailService.countAllEmailsByCampaignId({
-    context: params.context,
-    emailCampaignId: params.emailCampaignId,
-  });
+  const { data: emails, error: emailError } = await supabase
+    .from("Email")
+    .select("*")
+    .eq("emailCampaignId", params.emailCampaignId);
 
-  if (emailCount === null) {
-    emailService.createEmail({
+  if (!emails || emailError) {
+    throw Errors.emailCampaignNotFound(params.emailCampaignId);
+  }
+
+  if (emails.length === 0 && !data.isIndividual) {
+    const newEmail = await emailService.createEmail({
       context: params.context,
       emailCampaignId: params.emailCampaignId,
     });
+
+    return {
+      emailCampaignId: data.emailCampaignId,
+      companionId: data.companionId,
+      isIndividual: data.isIndividual ?? null,
+      name: data.name ?? null,
+      createdAt: data.createdAt,
+      emails: [newEmail],
+    };
   }
 
-  return EmailCampaign.fromRow(data).toResource();
+  return {
+    emailCampaignId: data.emailCampaignId,
+    companionId: data.companionId,
+    isIndividual: data.isIndividual ?? null,
+    name: data.name ?? null,
+    createdAt: data.createdAt,
+    emails: emails.map((e) => ({
+      emailId: e.emailId,
+      content: e.content,
+      like: e.like,
+      dislike: e.dislike,
+      followup: e.followup,
+      wasRefreshed: e.wasRefreshed,
+      wasCopied: e.wasCopied,
+      wasSent: e.wasSent,
+      wasReplied: e.wasReplied,
+      numberOfReplies: e.numberOfReplies,
+      sentiment: e.sentiment,
+      firstReply: e.firstReply,
+      lastReply: e.lastReply,
+      callScheduled: e.callScheduled,
+      notes: e.notes,
+      createdAt: e.createdAt,
+      updatedAt: e.updatedAt,
+      emailCampaignId: e.emailCampaignId,
+      profilerId: e.profilerId ?? null,
+    })),
+  };
 }
 
 const emailCampaignService = {
