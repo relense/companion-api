@@ -50,7 +50,7 @@ async function getEmailCampaign(params: {
 
   const { data: emails, error: emailError } = await supabase
     .from("Email")
-    .select("emailId, content, createdAt")
+    .select("*")
     .eq("emailCampaignId", params.emailCampaignId);
 
   if (!emails || emailError) {
@@ -63,10 +63,23 @@ async function getEmailCampaign(params: {
     isIndividual: data.isIndividual ?? null,
     name: data.name ?? null,
     createdAt: data.createdAt,
-    emails: emails.map((email) => ({
-      emailId: email.emailId,
-      content: email.content,
-      createdAt: email.createdAt,
+    updatedAt: data.updatedAt,
+    emails: emails.map((e) => ({
+      emailId: e.emailId,
+      content: e.content,
+      like: e.like,
+      dislike: e.dislike,
+      followup: e.followup,
+      wasRefreshed: e.wasRefreshed,
+      wasCopied: e.wasCopied,
+      numberOfReplies: e.numberOfReplies,
+      sentiment: e.sentiment,
+      firstReply: e.firstReply,
+      lastReply: e.lastReply,
+      notes: e.notes,
+      createdAt: e.createdAt,
+      updatedAt: e.updatedAt,
+      emailCampaignId: e.emailCampaignId,
     })),
   };
 }

@@ -30,7 +30,10 @@ async function createEmail(params: {
   const messages: ChatCompletionMessageParam[] = [
     {
       role: "system",
-      content: promptUtil.generateEmailPrompt(userConversation.items),
+      content: promptUtil.generateEmailPrompt(
+        userConversation.items,
+        emailCampaign.isIndividual
+      ),
     },
   ];
 

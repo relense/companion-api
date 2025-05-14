@@ -398,7 +398,7 @@ declare namespace ClientApi {
         isIndividual?: boolean | null;
         name: string | null;
         createdAt: string;
-        emails?: { emailId: string; content: string; createdAt: string; }[];
+        emails: { emailId: string; content: string; like: boolean; dislike: boolean; followup: boolean; wasRefreshed: boolean; wasCopied: boolean; numberOfReplies: integer; sentiment: '-1' | '0' | '1'; firstReply: string | null; lastReply: string | null; notes: string | null; createdAt: string; updatedAt: string; emailCampaignId: string; }[];
       }
       export interface $400 {
         message: string;

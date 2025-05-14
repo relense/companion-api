@@ -61,7 +61,10 @@ const generateOnBoardingPrompt = () => {
   `;
 };
 
-export const generateEmailPrompt = (userResponses: any) => {
+export const generateEmailPrompt = (
+  userResponses: any,
+  isIndividual: boolean
+) => {
   const formattedResponses = userResponses
     .map(
       (m: { role: string; content: any }) =>
@@ -74,6 +77,19 @@ export const generateEmailPrompt = (userResponses: any) => {
   IMPORTANT:
   - Always write the message in **English**, even if the user's responses are in another language.
   - Do not include any introductions, explanations, or extra formatting. Only return the subject line and email body as described below.
+
+  CONTEXT:
+  - This email is intended for ${
+    isIndividual
+      ? "**one specific person**"
+      : "**a broader audience of multiple people**"
+  }.
+  - Adjust tone and personalization accordingly:
+    ${
+      isIndividual
+        ? "- Make it feel highly personal, as if it were written just for them."
+        : "- Keep it friendly and relevant, but avoid personal details that wouldn’t scale to many recipients."
+    }
 
   BEFORE WRITING:
   1. **Analyze** the user's responses and tone.
