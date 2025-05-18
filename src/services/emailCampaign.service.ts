@@ -3,6 +3,7 @@ import { EmailCampaign } from "../models/EmailCampaign.js";
 import { Errors } from "../utils/errors.js";
 import { companionService } from "./companion.service.js";
 import { emailService } from "./email.service.js";
+import { profilerService } from "./profilerService.js";
 import { SecurityContext } from "./security.service.js";
 
 async function createEmailCampaign(params: {
@@ -64,6 +65,7 @@ async function getEmailCampaign(params: {
     name: data.name ?? null,
     createdAt: data.createdAt,
     updatedAt: data.updatedAt,
+    profilerId: data.profilerId ?? null,
     emails: emails.map((e) => ({
       emailId: e.emailId,
       content: e.content,
@@ -115,37 +117,50 @@ async function updateEmailCampaign(params: {
   isIndividual?: boolean;
   emailCampaignId: string;
 }) {
-  const updates: Partial<{ name: string; isIndividual: boolean }> = {};
+  const emailCampaign = await getEmailCampaign({
+    context: params.context,
+    emailCampaignId: params.emailCampaignId,
+  });
+
+  const updates: Partial<{
+    name: string;
+    isIndividual: boolean;
+    profilerId: string;
+  }> = {};
 
   if (params.name !== undefined) {
     updates.name = params.name;
   }
 
-  if (params.isIndividual !== undefined) {
+  if (
+    emailCampaign.isIndividual !== undefined &&
+    emailCampaign.isIndividual === null
+  ) {
     updates.isIndividual = params.isIndividual;
+
+    if (params.isIndividual) {
+      const profiler = await profilerService.createProfiler({
+        context: params.context,
+        companionId: emailCampaign.companionId,
+        emailCampaignId: emailCampaign.emailCampaignId,
+      });
+
+      updates.profilerId = profiler.profilerId;
+    }
   }
 
   const { data, error } = await supabase
     .from("EmailCampaign")
     .update(updates)
-    .eq("emailCampaignId", params.emailCampaignId)
+    .eq("emailCampaignId", emailCampaign.emailCampaignId)
     .select()
     .single();
 
   if (!data || error) {
-    throw Errors.emailCampaignNotFound(params.emailCampaignId);
+    throw Errors.emailCampaignNotFound(emailCampaign.emailCampaignId);
   }
 
-  const { data: emails, error: emailError } = await supabase
-    .from("Email")
-    .select("*")
-    .eq("emailCampaignId", params.emailCampaignId);
-
-  if (!emails || emailError) {
-    throw Errors.emailCampaignNotFound(params.emailCampaignId);
-  }
-
-  if (emails.length === 0 && !data.isIndividual) {
+  if (emailCampaign.emails.length === 0 && !data.isIndividual) {
     const newEmail = await emailService.createEmail({
       context: params.context,
       emailCampaignId: params.emailCampaignId,
@@ -157,6 +172,7 @@ async function updateEmailCampaign(params: {
       isIndividual: data.isIndividual ?? null,
       name: data.name ?? null,
       createdAt: data.createdAt,
+      profilerId: data.profilerId ?? null,
       emails: [newEmail],
     };
   }
@@ -167,7 +183,8 @@ async function updateEmailCampaign(params: {
     isIndividual: data.isIndividual ?? null,
     name: data.name ?? null,
     createdAt: data.createdAt,
-    emails: emails.map((e) => ({
+    profilerId: data.profilerId ?? null,
+    emails: emailCampaign.emails.map((e) => ({
       emailId: e.emailId,
       content: e.content,
       like: e.like,

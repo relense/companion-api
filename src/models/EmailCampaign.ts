@@ -5,6 +5,7 @@ type EmailCampaignRow = {
   createdAt: string;
   updatedAt: string;
   companionId: string;
+  profilerId?: string | null;
 };
 
 export class EmailCampaign {
@@ -14,7 +15,8 @@ export class EmailCampaign {
     public readonly name: string,
     public readonly createdAt: string,
     public readonly updatedAt: string,
-    public readonly companionId: string
+    public readonly companionId: string,
+    public readonly profilerId?: string | null
   ) {}
 
   toResource() {
@@ -25,6 +27,7 @@ export class EmailCampaign {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       companionId: this.companionId,
+      profilerId: this.profilerId,
     };
   }
 
@@ -35,7 +38,8 @@ export class EmailCampaign {
       row.name,
       row.createdAt,
       row.updatedAt,
-      row.companionId
+      row.companionId,
+      row.profilerId
     );
   }
 }

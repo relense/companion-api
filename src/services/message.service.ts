@@ -3,6 +3,7 @@ import { Message } from "../models/Message.js";
 import { Errors } from "../utils/errors.js";
 import { Pagination } from "../utils/paginationUtils.js";
 import { companionService } from "./companion.service.js";
+import { profilerService } from "./profilerService.js";
 import { SecurityContext } from "./security.service.js";
 
 async function insertBulkMessages(params: {
@@ -56,6 +57,39 @@ async function createMessage(params: {
         role: params.role,
         content: params.content,
         companionId: params.companionId,
+      },
+    ])
+    .select()
+    .single();
+
+  if (!data || error) throw Errors.messageNotCreated(params.content);
+
+  return Message.fromRow(data);
+}
+
+async function createProfilerMessage(params: {
+  context: SecurityContext<"CLIENT">;
+  content: string;
+  role: string;
+  profilerId: string;
+}) {
+  const profiler = await profilerService.getProfiler({
+    context: params.context,
+    profilerId: params.profilerId,
+  });
+
+  if (!profiler) {
+    throw Errors.profilerNotfound(params.profilerId);
+  }
+
+  let { data, error } = await supabase
+    .from("Message")
+    .insert([
+      {
+        role: params.role,
+        content: params.content,
+        companionId: profiler.companionId,
+        profilerId: params.profilerId,
       },
     ])
     .select()
@@ -166,14 +200,49 @@ async function getAllMessagesByCompanion(params: {
   };
 }
 
+async function getAllMessagesByProfiler(params: {
+  context: SecurityContext<"CLIENT">;
+  pagination: Pagination;
+  profilerId: string;
+}) {
+  const profiler = await profilerService.getProfiler({
+    context: params.context,
+    profilerId: params.profilerId,
+  });
+
+  if (!profiler) {
+    throw Errors.profilerNotfound(params.profilerId);
+  }
+
+  const from = (params.pagination.page - 1) * params.pagination.size;
+  const to = from + params.pagination.size - 1;
+
+  let { data, error } = await supabase
+    .from("Profiler")
+    .select("*")
+    .eq("profilerId", profiler.profilerId)
+    .order("createdAt", { ascending: true })
+    .range(from, to);
+
+  if (!data || error) throw new Error("Fetch failed");
+
+  return {
+    items: data,
+    itemCount: data.length,
+    pagination: params.pagination,
+  };
+}
+
 const messageService = {
   insertBulkMessages,
   createMessage,
+  createProfilerMessage,
   getMessage,
   getAllMessages,
   updateMessage,
   deleteMessage,
   getAllMessagesByCompanion,
+  getAllMessagesByProfiler,
 };
 
 export { messageService };

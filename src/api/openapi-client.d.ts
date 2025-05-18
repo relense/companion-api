@@ -398,6 +398,7 @@ declare namespace ClientApi {
         isIndividual?: boolean | null;
         name: string | null;
         createdAt: string;
+        profilerId?: string | null;
         emails: { emailId: string; content: string; like: boolean; dislike: boolean; followup: boolean; wasRefreshed: boolean; wasCopied: boolean; wasSent: boolean; wasReplied: boolean; numberOfReplies: integer; sentiment: '-1' | '0' | '1'; firstReply: string | null; lastReply: string | null; callScheduled: string | null; notes: string | null; createdAt: string; updatedAt: string; emailCampaignId: string; profilerId: string | null; }[];
       }
       export interface $400 {
@@ -599,6 +600,38 @@ declare namespace ClientApi {
       method: "post";
       expressPath: "/gpt/history";
       openapiPath: "/gpt/history";
+      pathParams: PathParameters;
+      queryParams: QueryParameters;
+      requestBody: RequestBody;
+      headers?: any;
+      responses: Responses.$200 | Responses.$400 | Responses.$500;
+      successResponses: Responses.$200;
+    }
+  }
+  namespace SendProfilerMessages {
+    export type QueryParameters = {};
+    export type PathParameters = {};
+    export interface RequestBody {
+      messages: { role: 'system' | 'user' | 'assistant'; content: string; }[];
+      profilerId: string;
+    }
+    namespace Responses {
+      export interface $200 {
+        message: { role: string; content: string; };
+        profiler?: { profilerId: string; email: string; location: string; name: string; companyUrl: string; socialMediaUrl: string[]; otherSourcesUrl: string[]; createdAt: string; updatedAt: string; companionId: string; emailCampaignId: string; };
+      }
+      export interface $400 {
+        message: string;
+      }
+      export interface $500 {
+        message: string;
+      }
+    }
+    export interface Config {
+      operationId: "sendProfilerMessages";
+      method: "post";
+      expressPath: "/gpt/profiler";
+      openapiPath: "/gpt/profiler";
       pathParams: PathParameters;
       queryParams: QueryParameters;
       requestBody: RequestBody;

@@ -10,6 +10,7 @@ const Errors = {
     new AppError(`Messages not found for user with id ${userId}`, 400),
   messageNotCreated: (message: string) =>
     new AppError(`Failed to create message: ${message}`, 500),
+  profilerNotCreated: () => new AppError(`Failed to create profiler`, 500),
   companionNotCreated: (name: string) =>
     new AppError(`Failed to create companion: ${name}`, 500),
   emailNotCreated: () => new AppError("Failed to created an email", 500),
@@ -20,6 +21,8 @@ const Errors = {
     new AppError(`Email campaign with id ${emailCampaignId} not found`, 400),
   emailCampaignsNotFound: () =>
     new AppError(`Email campaigns where not found`, 400),
+  profilerNotfound: (profilerId: string) =>
+    new AppError(`There are no profilers with id ${profilerId}`, 400),
   unauthorized: () => new AppError("Unauthorized", 401),
   forbidden: () => new AppError("Forbidden", 403),
 };

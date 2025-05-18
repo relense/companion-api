@@ -4,8 +4,8 @@ type ProfilerRow = {
   location: string;
   name: string;
   companyUrl: string;
-  socialMediaUrl: string[];
-  otherSourcesUrl: string[];
+  socialMediaUrl: string;
+  otherSourcesUrl: string;
   createdAt: string;
   updatedAt: string;
   companionId: string;
@@ -19,8 +19,8 @@ export class Profiler {
     public readonly location: string,
     public readonly name: string,
     public readonly companyUrl: string,
-    public readonly socialMediaUrl: string[],
-    public readonly otherSourcesUrl: string[],
+    public readonly socialMediaUrl: string,
+    public readonly otherSourcesUrl: string,
     public readonly createdAt: string,
     public readonly updatedAt: string,
     public readonly companionId: string,

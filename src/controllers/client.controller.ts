@@ -348,6 +348,23 @@ router.post<ClientApi.SendMessagesAndSave.Config>(
   }
 );
 
+router.post<ClientApi.SendProfilerMessages.Config>(
+  "/gpt/profiler",
+  async (req, res, next) => {
+    try {
+      const response = await openaiServices.sendMessagesProfiler({
+        context: securityService.assertClientContext(req.context),
+        profilerId: req.body.profilerId,
+        messages: req.body.messages,
+      });
+
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 // COMPLETE AUTHENTICATION CLIENT ENDPOINTS
 
 //**

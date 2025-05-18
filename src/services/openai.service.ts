@@ -159,11 +159,64 @@ async function sendMoreHistory(params: {
   return response;
 }
 
+async function sendMessagesProfiler(params: {
+  context: SecurityContext<"CLIENT">;
+  messages: ClientApi.SendProfilerMessages.RequestBody["messages"];
+  profilerId: string;
+}) {
+  const profilerMessages = await messageService.getAllMessagesByProfiler({
+    context: params.context,
+    profilerId: params.profilerId,
+    pagination: { page: 1, size: 25 },
+  });
+
+  if (params.messages[0].role == "user") {
+    const savedMessage = await messageService.createProfilerMessage({
+      context: params.context,
+      content: params.messages[0].content,
+      role: params.messages[0].role,
+      profilerId: params.profilerId,
+    });
+
+    profilerMessages.items.push(savedMessage);
+  }
+
+  const messages = [
+    {
+      role: "system",
+      content: promptUtil.generateProfilerPrompt(),
+    },
+    ...profilerMessages.items,
+  ] as ChatCompletionMessageParam[];
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages,
+  });
+
+  if (response && response?.choices?.[0]?.message?.content) {
+    await messageService.createProfilerMessage({
+      context: params.context,
+      content: response?.choices?.[0]?.message?.content,
+      role: response?.choices?.[0]?.message?.role,
+      profilerId: params.profilerId,
+    });
+  }
+
+  return {
+    message: {
+      role: response.choices[0].message.role ?? "assistant",
+      content: response.choices[0].message.content || "",
+    },
+  };
+}
+
 const openaiServices = {
   getInitialMessage,
   sendOpenaiMessages,
   sendOpenaiMessagesAndSave,
   sendMoreHistory,
+  sendMessagesProfiler,
 };
 
 export { openaiServices };

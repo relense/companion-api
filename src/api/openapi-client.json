@@ -1106,6 +1106,7 @@
                       "format": "date-time",
                       "example": "2021-01-01T08:00:00Z"
                     },
+                    "profilerId": { "type": "string", "nullable": true },
                     "emails": {
                       "type": "array",
                       "items": {
@@ -1749,6 +1750,144 @@
                     "message": {
                       "type": "string"
                     }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gpt/profiler": {
+      "post": {
+        "summary": "Send conversation to ChatGPT to extract profiler data",
+        "operationId": "sendProfilerMessages",
+        "tags": ["openai"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "enum": ["system", "user", "assistant"]
+                        },
+                        "content": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["role", "content"]
+                    }
+                  },
+                  "profilerId": {
+                    "type": "string",
+                    "description": "The ID of the profiler"
+                  }
+                },
+                "required": ["messages", "profilerId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "GPT responded with next message or profiler data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string"
+                        },
+                        "content": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["role", "content"]
+                    },
+                    "profiler": {
+                      "type": "object",
+                      "nullable": true,
+                      "description": "Returned only if <PROFILER_COMPLETE> was included",
+                      "properties": {
+                        "profilerId": { "type": "string" },
+                        "email": { "type": "string" },
+                        "location": { "type": "string" },
+                        "name": { "type": "string" },
+                        "companyUrl": { "type": "string" },
+                        "socialMediaUrl": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "otherSourcesUrl": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "companionId": { "type": "string" },
+                        "emailCampaignId": { "type": "string" }
+                      },
+                      "required": [
+                        "profilerId",
+                        "email",
+                        "location",
+                        "name",
+                        "companyUrl",
+                        "socialMediaUrl",
+                        "otherSourcesUrl",
+                        "createdAt",
+                        "updatedAt",
+                        "companionId",
+                        "emailCampaignId"
+                      ]
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
                   },
                   "required": ["message"]
                 }
