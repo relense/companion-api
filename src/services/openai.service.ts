@@ -164,23 +164,26 @@ async function sendMessagesProfiler(params: {
   messages: ClientApi.SendProfilerMessages.RequestBody["messages"];
   profilerId: string;
 }) {
+  //Get all Messages related to a profiler
   const profilerMessages = await messageService.getAllMessagesByProfiler({
     context: params.context,
     profilerId: params.profilerId,
     pagination: { page: 1, size: 25 },
   });
 
-  if (params.messages[0].role == "user") {
+  //If the last message in params.messages === user then we should add that message to the list of profiler messages.
+  if (params.messages[params.messages.length - 1].role == "user") {
     const savedMessage = await messageService.createProfilerMessage({
       context: params.context,
-      content: params.messages[0].content,
-      role: params.messages[0].role,
+      content: params.messages[params.messages.length - 1].content,
+      role: params.messages[params.messages.length - 1].role,
       profilerId: params.profilerId,
     });
 
     profilerMessages.items.push(savedMessage);
   }
 
+  //Create the message object to send to chatgpt. the system prompt and the messages that the user exchanged with the system.
   const messages = [
     {
       role: "system",
@@ -189,11 +192,13 @@ async function sendMessagesProfiler(params: {
     ...profilerMessages.items,
   ] as ChatCompletionMessageParam[];
 
+  //Create the response
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages,
   });
 
+  //if there is a response then add this response to the list of messages related with the profiler
   if (response && response?.choices?.[0]?.message?.content) {
     await messageService.createProfilerMessage({
       context: params.context,
@@ -203,6 +208,7 @@ async function sendMessagesProfiler(params: {
     });
   }
 
+  //return the last message that the assistant gave. The user should have all the messages in the FE.
   return {
     message: {
       role: response.choices[0].message.role ?? "assistant",

@@ -210,15 +210,11 @@ async function getAllMessagesByProfiler(params: {
     profilerId: params.profilerId,
   });
 
-  if (!profiler) {
-    throw Errors.profilerNotfound(params.profilerId);
-  }
-
   const from = (params.pagination.page - 1) * params.pagination.size;
   const to = from + params.pagination.size - 1;
 
   let { data, error } = await supabase
-    .from("Profiler")
+    .from("Message")
     .select("*")
     .eq("profilerId", profiler.profilerId)
     .order("createdAt", { ascending: true })
