@@ -1106,6 +1106,11 @@
                       "format": "date-time",
                       "example": "2021-01-01T08:00:00Z"
                     },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2021-01-02T08:00:00Z"
+                    },
                     "profilerId": { "type": "string", "nullable": true },
                     "emails": {
                       "type": "array",
@@ -1167,6 +1172,14 @@
                           "profilerId"
                         ]
                       }
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Raw Message object from Supabase",
+                        "additionalProperties": true
+                      }
                     }
                   },
                   "required": [
@@ -1174,7 +1187,9 @@
                     "companionId",
                     "name",
                     "createdAt",
-                    "emails"
+                    "updatedAt",
+                    "emails",
+                    "messages"
                   ]
                 }
               }
@@ -1495,17 +1510,14 @@
                   "type": "object",
                   "properties": {
                     "profilerId": { "type": "string" },
-                    "email": { "type": "string" },
-                    "location": { "type": "string" },
-                    "name": { "type": "string" },
-                    "companyUrl": { "type": "string" },
-                    "socialMediaUrl": {
-                      "type": "array",
-                      "items": { "type": "string" }
-                    },
+                    "email": { "type": "string", "nullable": true },
+                    "location": { "type": "string", "nullable": true },
+                    "name": { "type": "string", "nullable": true },
+                    "companyUrl": { "type": "string", "nullable": true },
+                    "socialMediaUrl": { "type": "string", "nullable": true },
                     "otherSourcesUrl": {
-                      "type": "array",
-                      "items": { "type": "string" }
+                      "type": "string",
+                      "nullable": true
                     },
                     "createdAt": {
                       "type": "string",
@@ -1518,7 +1530,8 @@
                       "example": "2021-01-01T09:00:00Z"
                     },
                     "companionId": { "type": "string" },
-                    "emailCampaignId": { "type": "string" }
+                    "emailCampaignId": { "type": "string" },
+                    "hasOnBoarding": { "type": "boolean" }
                   },
                   "required": [
                     "profilerId",
@@ -1531,7 +1544,8 @@
                     "createdAt",
                     "updatedAt",
                     "companionId",
-                    "emailCampaignId"
+                    "emailCampaignId",
+                    "hasOnBoarding"
                   ]
                 }
               }
@@ -1776,7 +1790,7 @@
     "/gpt/profiler": {
       "post": {
         "summary": "Send conversation to ChatGPT to extract profiler data",
-        "operationId": "sendProfilerMessages",
+        "operationId": "sendProfilerMessage",
         "tags": ["openai"],
         "requestBody": {
           "required": true,
@@ -1785,28 +1799,32 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "messages": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "role": {
-                          "type": "string",
-                          "enum": ["system", "user", "assistant"]
-                        },
-                        "content": {
-                          "type": "string"
-                        }
+                  "message": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "user",
+                          "assistant",
+                          "system",
+                          "tool",
+                          "function",
+                          "developer"
+                        ]
                       },
-                      "required": ["role", "content"]
-                    }
+                      "content": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["role", "content"]
                   },
                   "profilerId": {
                     "type": "string",
                     "description": "The ID of the profiler"
                   }
                 },
-                "required": ["messages", "profilerId"]
+                "required": ["profilerId"]
               }
             }
           }
@@ -1837,17 +1855,17 @@
                       "description": "Returned only if <PROFILER_COMPLETE> was included",
                       "properties": {
                         "profilerId": { "type": "string" },
-                        "email": { "type": "string" },
-                        "location": { "type": "string" },
-                        "name": { "type": "string" },
-                        "companyUrl": { "type": "string" },
+                        "email": { "type": "string", "nullable": true },
+                        "location": { "type": "string", "nullable": true },
+                        "name": { "type": "string", "nullable": true },
+                        "companyUrl": { "type": "string", "nullable": true },
                         "socialMediaUrl": {
-                          "type": "array",
-                          "items": { "type": "string" }
+                          "type": "string",
+                          "nullable": true
                         },
                         "otherSourcesUrl": {
-                          "type": "array",
-                          "items": { "type": "string" }
+                          "type": "string",
+                          "nullable": true
                         },
                         "createdAt": {
                           "type": "string",

@@ -78,10 +78,6 @@ async function createProfilerMessage(params: {
     profilerId: params.profilerId,
   });
 
-  if (!profiler) {
-    throw Errors.profilerNotfound(params.profilerId);
-  }
-
   let { data, error } = await supabase
     .from("Message")
     .insert([
@@ -95,7 +91,9 @@ async function createProfilerMessage(params: {
     .select()
     .single();
 
-  if (!data || error) throw Errors.messageNotCreated(params.content);
+  if (!data || error) {
+    throw Errors.messageNotCreated(params.content);
+  }
 
   return Message.fromRow(data);
 }
@@ -213,18 +211,16 @@ async function getAllMessagesByProfiler(params: {
   const from = (params.pagination.page - 1) * params.pagination.size;
   const to = from + params.pagination.size - 1;
 
-  let { data, error } = await supabase
+  let { data } = await supabase
     .from("Message")
     .select("*")
     .eq("profilerId", profiler.profilerId)
     .order("createdAt", { ascending: true })
     .range(from, to);
 
-  if (!data || error) throw new Error("Fetch failed");
-
   return {
-    items: data,
-    itemCount: data.length,
+    items: data ?? [],
+    itemCount: data ? data.length : 0,
     pagination: params.pagination,
   };
 }

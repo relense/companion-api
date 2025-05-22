@@ -23,6 +23,8 @@ const Errors = {
     new AppError(`Email campaigns where not found`, 400),
   profilerNotfound: (profilerId: string) =>
     new AppError(`There are no profilers with id ${profilerId}`, 400),
+  profilerUpdateFailed: (profilerId: string) =>
+    new AppError(`There was an issue update profiler id ${profilerId}`, 400),
   unauthorized: () => new AppError("Unauthorized", 401),
   forbidden: () => new AppError("Forbidden", 403),
 };

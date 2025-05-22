@@ -58,6 +58,11 @@ async function getEmailCampaign(params: {
     throw Errors.emailCampaignNotFound(params.emailCampaignId);
   }
 
+  const { data: messages } = await supabase
+    .from("Message")
+    .select("*")
+    .eq("profilerId", data.profilerId);
+
   return {
     emailCampaignId: data.emailCampaignId,
     companionId: data.companionId,
@@ -87,6 +92,74 @@ async function getEmailCampaign(params: {
       emailCampaignId: e.emailCampaignId,
       profilerId: e.profilerId ?? null,
     })),
+    messages: messages ?? [],
+  };
+}
+
+async function getEmailCampaignByProfileId(params: {
+  context: SecurityContext<"CLIENT">;
+  profilerId: string;
+}) {
+  const { data, error } = await supabase
+    .from("EmailCampaign")
+    .select("*")
+    .eq("profilerId", params.profilerId)
+    .single();
+
+  if (!data || error) {
+    throw Errors.emailCampaignNotFound(params.profilerId);
+  }
+
+  const { data: emails, error: emailError } = await supabase
+    .from("Email")
+    .select("*")
+    .eq("emailCampaignId", data.emailCampaignId);
+
+  if (!emails || emailError) {
+    throw Errors.emailCampaignNotFound(data.emailCampaignId);
+  }
+
+  const { data: messages } = await supabase
+    .from("Message")
+    .select("*")
+    .eq("profilerId", data.profilerId);
+
+  const { data: profilerData } = await supabase
+    .from("Profiler")
+    .select("*")
+    .eq("profilerId", data.profilerId);
+
+  return {
+    emailCampaignId: data.emailCampaignId,
+    companionId: data.companionId,
+    isIndividual: data.isIndividual ?? null,
+    name: data.name ?? null,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    profilerId: data.profilerId ?? null,
+    emails: emails.map((e) => ({
+      emailId: e.emailId,
+      content: e.content,
+      like: e.like,
+      dislike: e.dislike,
+      followup: e.followup,
+      wasRefreshed: e.wasRefreshed,
+      wasCopied: e.wasCopied,
+      wasSent: e.wasSent,
+      wasReplied: e.wasReplied,
+      numberOfReplies: e.numberOfReplies,
+      sentiment: e.sentiment,
+      firstReply: e.firstReply,
+      lastReply: e.lastReply,
+      callScheduled: e.callScheduled,
+      notes: e.notes,
+      createdAt: e.createdAt,
+      updatedAt: e.updatedAt,
+      emailCampaignId: e.emailCampaignId,
+      profilerId: e.profilerId ?? null,
+    })),
+    messages: messages ?? [],
+    profiler: profilerData,
   };
 }
 
@@ -211,6 +284,7 @@ async function updateEmailCampaign(params: {
 const emailCampaignService = {
   createEmailCampaign,
   getEmailCampaign,
+  getEmailCampaignByProfileId,
   getAllEmailCampaign,
   updateEmailCampaign,
 };

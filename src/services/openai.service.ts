@@ -6,6 +6,11 @@ import prompts from "../prompts/outreacthCompanion.js";
 import promptUtil from "../prompts/outreacthCompanion.js";
 import { messageService } from "./message.service.js";
 import { companionService } from "./companion.service.js";
+import { profilerService } from "./profilerService.js";
+import { emailCampaignService } from "./emailCampaign.service.js";
+import { json } from "stream/consumers";
+import { Profiler } from "../models/Profiler.js";
+import { emailService } from "./email.service.js";
 
 const openai = new OpenAI({
   apiKey: process.env.OOPEN_API_TEST_KEY,
@@ -159,60 +164,135 @@ async function sendMoreHistory(params: {
   return response;
 }
 
-async function sendMessagesProfiler(params: {
+async function sendMessageProfiler(params: {
   context: SecurityContext<"CLIENT">;
-  messages: ClientApi.SendProfilerMessages.RequestBody["messages"];
+  message: ClientApi.SendProfilerMessage.RequestBody["message"];
   profilerId: string;
-}) {
-  //Get all Messages related to a profiler
+}): Promise<{
+  message: { role: string; content: string };
+  profiler?: {
+    profilerId: string;
+    email: string;
+    location: string;
+    name: string;
+    companyUrl: string;
+    socialMediaUrl: string;
+    otherSourcesUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    companionId: string;
+    emailCampaignId: string;
+  };
+}> {
+  const profiler = await profilerService.getProfiler({
+    context: params.context,
+    profilerId: params.profilerId,
+  });
+
   const profilerMessages = await messageService.getAllMessagesByProfiler({
     context: params.context,
     profilerId: params.profilerId,
     pagination: { page: 1, size: 25 },
   });
 
-  //If the last message in params.messages === user then we should add that message to the list of profiler messages.
-  if (params.messages[params.messages.length - 1].role == "user") {
+  if (params.message?.role === "user") {
     const savedMessage = await messageService.createProfilerMessage({
       context: params.context,
-      content: params.messages[params.messages.length - 1].content,
-      role: params.messages[params.messages.length - 1].role,
+      content: params.message.content,
+      role: params.message.role,
       profilerId: params.profilerId,
     });
 
     profilerMessages.items.push(savedMessage);
   }
 
-  //Create the message object to send to chatgpt. the system prompt and the messages that the user exchanged with the system.
-  const messages = [
+  const messages: ChatCompletionMessageParam[] = [
     {
       role: "system",
       content: promptUtil.generateProfilerPrompt(),
     },
     ...profilerMessages.items,
-  ] as ChatCompletionMessageParam[];
+  ];
 
-  //Create the response
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages,
   });
 
-  //if there is a response then add this response to the list of messages related with the profiler
-  if (response && response?.choices?.[0]?.message?.content) {
+  const assistantMessage = response?.choices?.[0]?.message?.content ?? "";
+
+  const emailCampaign = await emailCampaignService.getEmailCampaignByProfileId({
+    context: params.context,
+    profilerId: params.profilerId,
+  });
+
+  const isComplete =
+    assistantMessage.includes("<PROFILER_COMPLETE>") && !profiler.hasOnBoarding;
+
+  if (isComplete) {
+    let parsedData: any = null;
+
+    const jsonMatch = assistantMessage.match(
+      /<PROFILER_JSON_START>([\s\S]*?)<PROFILER_JSON_END>/
+    );
+
+    if (jsonMatch?.[1]) {
+      try {
+        parsedData = JSON.parse(jsonMatch[1].trim());
+
+        await profilerService.updateProfiler({
+          context: params.context,
+          profilerId: params.profilerId,
+          name: parsedData.name,
+          email: parsedData.email,
+          location: parsedData.location,
+          companyUrl: parsedData.companyUrl,
+          socialMediaUrl: parsedData.socialMediaUrl,
+          otherSourcesUrl: parsedData.otherSourcesUrl,
+          companionId: emailCampaign.companionId,
+          emailCampaignId: emailCampaign.emailCampaignId,
+          updatedAt: new Date().toISOString(),
+          hasOnBoarding: true,
+        });
+
+        const updatedProfiler = await profilerService.getProfiler({
+          context: params.context,
+          profilerId: params.profilerId,
+        });
+
+        await emailService.createEmailPersonalized({
+          context: params.context,
+          emailCampaignId: profiler.emailCampaignId,
+        });
+
+        return {
+          message: {
+            role: "assistant",
+            content:
+              "We have all that we need to get started. Thanks for sharing.",
+          },
+          profiler: Profiler.fromRow(updatedProfiler).toResource(),
+        };
+      } catch (err) {
+        console.error("❌ Failed to parse <PROFILER_JSON_START> block", err);
+      }
+    }
+  }
+
+  // Save assistant message normally if not complete
+  if (assistantMessage) {
     await messageService.createProfilerMessage({
       context: params.context,
-      content: response?.choices?.[0]?.message?.content,
-      role: response?.choices?.[0]?.message?.role,
+      content: assistantMessage,
+      role: "assistant",
       profilerId: params.profilerId,
     });
   }
 
-  //return the last message that the assistant gave. The user should have all the messages in the FE.
   return {
     message: {
-      role: response.choices[0].message.role ?? "assistant",
-      content: response.choices[0].message.content || "",
+      role: "assistant",
+      content: assistantMessage,
     },
   };
 }
@@ -222,7 +302,7 @@ const openaiServices = {
   sendOpenaiMessages,
   sendOpenaiMessagesAndSave,
   sendMoreHistory,
-  sendMessagesProfiler,
+  sendMessageProfiler,
 };
 
 export { openaiServices };

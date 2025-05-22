@@ -10,6 +10,7 @@ type ProfilerRow = {
   updatedAt: string;
   companionId: string;
   emailCampaignId: string;
+  hasOnBoarding: boolean;
 };
 
 export class Profiler {
@@ -24,7 +25,8 @@ export class Profiler {
     public readonly createdAt: string,
     public readonly updatedAt: string,
     public readonly companionId: string,
-    public readonly emailCampaignId: string
+    public readonly emailCampaignId: string,
+    public readonly hasOnBoarding: boolean
   ) {}
 
   toResource() {
@@ -40,6 +42,7 @@ export class Profiler {
       updatedAt: this.updatedAt,
       companionId: this.companionId,
       emailCampaignId: this.emailCampaignId,
+      hasOnBoarding: this.hasOnBoarding,
     };
   }
 
@@ -55,7 +58,8 @@ export class Profiler {
       row.createdAt,
       row.updatedAt,
       row.companionId,
-      row.emailCampaignId
+      row.emailCampaignId,
+      row.hasOnBoarding
     );
   }
 }

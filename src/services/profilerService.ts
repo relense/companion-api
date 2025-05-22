@@ -36,7 +36,7 @@ async function getProfiler(params: {
     .eq("profilerId", params.profilerId)
     .single();
 
-  if (!data || error) throw Errors.profilerNotCreated();
+  if (!data || error) throw Errors.profilerNotfound(params.profilerId);
 
   return Profiler.fromRow(data);
 }
@@ -51,7 +51,39 @@ async function getProfilerByEmailCampaignId(params: {
     .eq("emailCampaignId", params.emailCampaignId)
     .single();
 
-  if (!data || error) throw Errors.profilerNotCreated();
+  if (!data || error) {
+    throw Errors.profilerNotfound(params.emailCampaignId);
+  }
+
+  return Profiler.fromRow(data).toResource();
+}
+
+async function updateProfiler(params: {
+  context: SecurityContext<"CLIENT">;
+  profilerId: string;
+  name?: string;
+  email?: string;
+  location?: string;
+  companyUrl?: string;
+  socialMediaUrl?: string;
+  otherSourcesUrl?: string;
+  companionId?: string | null;
+  emailCampaignId?: string | null;
+  updatedAt?: string;
+  hasOnBoarding?: boolean;
+}) {
+  const { profilerId, context, ...fieldsToUpdate } = params;
+
+  const { data, error } = await supabase
+    .from("Profiler")
+    .update(fieldsToUpdate)
+    .eq("profilerId", profilerId)
+    .select()
+    .single();
+
+  if (!data || error) {
+    throw Errors.profilerUpdateFailed(profilerId);
+  }
 
   return Profiler.fromRow(data);
 }
@@ -60,6 +92,7 @@ const profilerService = {
   createProfiler,
   getProfiler,
   getProfilerByEmailCampaignId,
+  updateProfiler,
 };
 
 export { profilerService };

@@ -398,8 +398,10 @@ declare namespace ClientApi {
         isIndividual?: boolean | null;
         name: string | null;
         createdAt: string;
+        updatedAt: string;
         profilerId?: string | null;
         emails: { emailId: string; content: string; like: boolean; dislike: boolean; followup: boolean; wasRefreshed: boolean; wasCopied: boolean; wasSent: boolean; wasReplied: boolean; numberOfReplies: integer; sentiment: '-1' | '0' | '1'; firstReply: string | null; lastReply: string | null; callScheduled: string | null; notes: string | null; createdAt: string; updatedAt: string; emailCampaignId: string; profilerId: string | null; }[];
+        messages: { [key: string]: any }[];
       }
       export interface $400 {
         message: string;
@@ -516,16 +518,17 @@ declare namespace ClientApi {
     namespace Responses {
       export interface $200 {
         profilerId: string;
-        email: string;
-        location: string;
-        name: string;
-        companyUrl: string;
-        socialMediaUrl: string[];
-        otherSourcesUrl: string[];
+        email: string | null;
+        location: string | null;
+        name: string | null;
+        companyUrl: string | null;
+        socialMediaUrl: string | null;
+        otherSourcesUrl: string | null;
         createdAt: string;
         updatedAt: string;
         companionId: string;
         emailCampaignId: string;
+        hasOnBoarding: boolean;
       }
       export interface $400 {
         message: string;
@@ -608,17 +611,17 @@ declare namespace ClientApi {
       successResponses: Responses.$200;
     }
   }
-  namespace SendProfilerMessages {
+  namespace SendProfilerMessage {
     export type QueryParameters = {};
     export type PathParameters = {};
     export interface RequestBody {
-      messages: { role: 'system' | 'user' | 'assistant'; content: string; }[];
+      message?: { role: 'user' | 'assistant' | 'system' | 'tool' | 'function' | 'developer'; content: string; };
       profilerId: string;
     }
     namespace Responses {
       export interface $200 {
         message: { role: string; content: string; };
-        profiler?: { profilerId: string; email: string; location: string; name: string; companyUrl: string; socialMediaUrl: string[]; otherSourcesUrl: string[]; createdAt: string; updatedAt: string; companionId: string; emailCampaignId: string; };
+        profiler?: { profilerId: string; email: string | null; location: string | null; name: string | null; companyUrl: string | null; socialMediaUrl: string | null; otherSourcesUrl: string | null; createdAt: string; updatedAt: string; companionId: string; emailCampaignId: string; };
       }
       export interface $400 {
         message: string;
@@ -628,7 +631,7 @@ declare namespace ClientApi {
       }
     }
     export interface Config {
-      operationId: "sendProfilerMessages";
+      operationId: "sendProfilerMessage";
       method: "post";
       expressPath: "/gpt/profiler";
       openapiPath: "/gpt/profiler";

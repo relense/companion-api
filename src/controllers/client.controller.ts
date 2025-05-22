@@ -12,6 +12,7 @@ import { openaiServices } from "../services/openai.service.js";
 import { userService } from "../services/user.service.js";
 import { emailCampaignService } from "../services/emailCampaign.service.js";
 import { emailService } from "../services/email.service.js";
+import { profilerService } from "../services/profilerService.js";
 
 const router = typedRouter(Router());
 
@@ -228,6 +229,22 @@ router.get<ClientApi.GetMessagesByCompanion.Config>(
   }
 );
 
+router.get<ClientApi.GetEmailCampaigns.Config>(
+  "/companions/:companionId/emailCampaigns",
+  async (req, res, next) => {
+    try {
+      const emailCampaigns = await emailCampaignService.getAllEmailCampaign({
+        context: securityService.assertClientContext(req.context),
+        companionId: req.params.companionId,
+      });
+
+      res.status(200).json(emailCampaigns);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 //**
 // Post route: Create an email campaign
 //  */
@@ -275,22 +292,6 @@ router.patch<ClientApi.UpdateEmailCampaign.Config>(
       });
 
       res.status(200).json(emailCampaign);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-router.get<ClientApi.GetEmailCampaigns.Config>(
-  "/companions/:companionId/emailCampaigns",
-  async (req, res, next) => {
-    try {
-      const emailCampaigns = await emailCampaignService.getAllEmailCampaign({
-        context: securityService.assertClientContext(req.context),
-        companionId: req.params.companionId,
-      });
-
-      res.status(200).json(emailCampaigns);
     } catch (err) {
       next(err);
     }
@@ -348,14 +349,30 @@ router.post<ClientApi.SendMessagesAndSave.Config>(
   }
 );
 
-router.post<ClientApi.SendProfilerMessages.Config>(
+router.post<ClientApi.SendProfilerMessage.Config>(
   "/gpt/profiler",
   async (req, res, next) => {
     try {
-      const response = await openaiServices.sendMessagesProfiler({
+      const response = await openaiServices.sendMessageProfiler({
         context: securityService.assertClientContext(req.context),
         profilerId: req.body.profilerId,
-        messages: req.body.messages,
+        message: req.body.message,
+      });
+
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get<ClientApi.GetEmailCampaignProfiler.Config>(
+  "/emailCampaigns/:emailCampaignId/profiler",
+  async (req, res, next) => {
+    try {
+      const response = await profilerService.getProfilerByEmailCampaignId({
+        context: req.context,
+        emailCampaignId: req.params.emailCampaignId,
       });
 
       res.status(200).json(response);
